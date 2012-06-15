@@ -15,26 +15,26 @@ namespace MarketScanner
     class DataHandler
     {
 
-        internal static void CreateRelation( ref DataSet ds, string sParent, string sParentCol, string sChild, string sChildCol )
+        internal static void CreateRelation(ref DataSet ds, string sParent, string sParentCol, string sChild, string sChildCol)
         {
             // Get the DataColumn objects from two DataTable objects 
             DataColumn parentColumn = ds.Tables[sParent].Columns[sParentCol];
             DataColumn childColumn = ds.Tables[sChild].Columns[sChildCol];
             // Create DataRelation.
-            DataRelation relParentChild = new DataRelation( sParent + "-" + sChild, parentColumn, childColumn );
+            DataRelation relParentChild = new DataRelation(sParent + "-" + sChild, parentColumn, childColumn);
             // Add the relation to the DataSet.
-            ds.Relations.Add( relParentChild );
+            ds.Relations.Add(relParentChild);
         }
 
         internal static DataTable CreateMarketLogsListTable()
         {
-            DataTable marketLogsList = new DataTable( "MarketLogsList" );
+            DataTable marketLogsList = new DataTable("MarketLogsList");
 
-            marketLogsList.Columns.Add( "region", Type.GetType( "System.String" ) );
-            marketLogsList.Columns.Add( "item", Type.GetType( "System.String" ) );
-            marketLogsList.Columns.Add( "created", Type.GetType( "System.DateTime" ) );
-            marketLogsList.Columns.Add( "filename", Type.GetType( "System.String" ) );
-            marketLogsList.Columns.Add( "filepath", Type.GetType( "System.String" ) );
+            marketLogsList.Columns.Add("region", Type.GetType("System.String"));
+            marketLogsList.Columns.Add("item", Type.GetType("System.String"));
+            marketLogsList.Columns.Add("created", Type.GetType("System.DateTime"));
+            marketLogsList.Columns.Add("filename", Type.GetType("System.String"));
+            marketLogsList.Columns.Add("filepath", Type.GetType("System.String"));
             // Return the new DataTable.
             return marketLogsList;
         }
@@ -42,26 +42,26 @@ namespace MarketScanner
 
         internal static DataTable CreateMarketLogEntriesTable()
         {
-            DataTable marketLogEntries = new DataTable( "MarketLogEntries" );
+            DataTable marketLogEntries = new DataTable("MarketLogEntries");
 
-            marketLogEntries.Columns.Add( "price", Type.GetType( "System.Double" ) );
-            marketLogEntries.Columns.Add( "volRemaining", Type.GetType( "System.Double" ) );
-            marketLogEntries.Columns.Add( "typeID", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "range", Type.GetType( "System.String" ) );
-            marketLogEntries.Columns.Add( "orderID", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "volEntered", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "minVolume", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "bid", Type.GetType( "System.Boolean" ) );
-            marketLogEntries.Columns.Add( "issued", Type.GetType( "System.DateTime" ) );
-            marketLogEntries.Columns.Add( "duration", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "stationID", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "regionID", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "solarSystemID", Type.GetType( "System.Int32" ) );
-            marketLogEntries.Columns.Add( "jumps", Type.GetType( "System.String" ) );
-            marketLogEntries.Columns.Add( "stationName", Type.GetType( "System.String" ) );
-            marketLogEntries.Columns.Add( "expires", Type.GetType( "System.String" ) );
-            marketLogEntries.Columns.Add( "Security", Type.GetType( "System.Double" ) );
-            marketLogEntries.Columns.Add( "corporationName", Type.GetType( "System.String" ) );
+            marketLogEntries.Columns.Add("price", Type.GetType("System.Double"));
+            marketLogEntries.Columns.Add("volRemaining", Type.GetType("System.Double"));
+            marketLogEntries.Columns.Add("typeID", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("range", Type.GetType("System.String"));
+            marketLogEntries.Columns.Add("orderID", Type.GetType("System.Int64"));
+            marketLogEntries.Columns.Add("volEntered", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("minVolume", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("bid", Type.GetType("System.Boolean"));
+            marketLogEntries.Columns.Add("issued", Type.GetType("System.DateTime"));
+            marketLogEntries.Columns.Add("duration", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("stationID", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("regionID", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("solarSystemID", Type.GetType("System.Int32"));
+            marketLogEntries.Columns.Add("jumps", Type.GetType("System.String"));
+            marketLogEntries.Columns.Add("stationName", Type.GetType("System.String"));
+            marketLogEntries.Columns.Add("expires", Type.GetType("System.String"));
+            marketLogEntries.Columns.Add("Security", Type.GetType("System.Double"));
+            marketLogEntries.Columns.Add("corporationName", Type.GetType("System.String"));
 
             // Return the new DataTable.
             return marketLogEntries;
@@ -69,13 +69,13 @@ namespace MarketScanner
 
         internal static DataTable CreateSellersEntriesTable()
         {
-            DataTable dtSellersEntries = new DataTable( "SellersEntries" );
+            DataTable dtSellersEntries = new DataTable("SellersEntries");
 
-            dtSellersEntries.Columns.Add( "Jumps", Type.GetType( "System.Int32" ) );
-            dtSellersEntries.Columns.Add( "Quantity", Type.GetType( "System.Int32" ) );
-            dtSellersEntries.Columns.Add( "Price", Type.GetType( "System.Double" ) );
-            dtSellersEntries.Columns.Add( "Location", Type.GetType( "System.String" ) );
-            dtSellersEntries.Columns.Add( "Expires", Type.GetType( "System.DateTime" ) );
+            dtSellersEntries.Columns.Add("Jumps", Type.GetType("System.Int32"));
+            dtSellersEntries.Columns.Add("Quantity", Type.GetType("System.Int32"));
+            dtSellersEntries.Columns.Add("Price", Type.GetType("System.Double"));
+            dtSellersEntries.Columns.Add("Location", Type.GetType("System.String"));
+            dtSellersEntries.Columns.Add("Expires", Type.GetType("System.DateTime"));
 
             // Return the new DataTable.
             return dtSellersEntries;
@@ -83,21 +83,21 @@ namespace MarketScanner
 
         internal static DataTable CreateBuyersEntriesTable()
         {
-            DataTable dtBuyersEntries = new DataTable( "BuyersEntries" );
+            DataTable dtBuyersEntries = new DataTable("BuyersEntries");
 
-            dtBuyersEntries.Columns.Add( "Jumps", Type.GetType( "System.Int32" ) );
-            dtBuyersEntries.Columns.Add( "Quantity", Type.GetType( "System.Int32" ) );
-            dtBuyersEntries.Columns.Add( "Price", Type.GetType( "System.Double" ) );
-            dtBuyersEntries.Columns.Add( "Location", Type.GetType( "System.String" ) );
-            dtBuyersEntries.Columns.Add( "range", Type.GetType( "System.String" ) );
-            dtBuyersEntries.Columns.Add( "minVolume", Type.GetType( "System.Int32" ) );
-            dtBuyersEntries.Columns.Add( "Expires", Type.GetType( "System.DateTime" ) );
+            dtBuyersEntries.Columns.Add("Jumps", Type.GetType("System.Int32"));
+            dtBuyersEntries.Columns.Add("Quantity", Type.GetType("System.Int32"));
+            dtBuyersEntries.Columns.Add("Price", Type.GetType("System.Double"));
+            dtBuyersEntries.Columns.Add("Location", Type.GetType("System.String"));
+            dtBuyersEntries.Columns.Add("range", Type.GetType("System.String"));
+            dtBuyersEntries.Columns.Add("minVolume", Type.GetType("System.Int32"));
+            dtBuyersEntries.Columns.Add("Expires", Type.GetType("System.DateTime"));
 
             // Return the new DataTable.
             return dtBuyersEntries;
         }
 
-        internal static MarketLog DataRowToMarketLog( DataRow dr )
+        internal static MarketLog DataRowToMarketLog(DataRow dr)
         {
             MarketLog ml = new MarketLog();
             ml.Region = (string)dr["region"];
@@ -108,7 +108,7 @@ namespace MarketScanner
             return ml;
         }
 
-        internal static DataRow MarketLogToDataRow( MarketLog ml, DataTable dtSource )
+        internal static DataRow MarketLogToDataRow(MarketLog ml, DataTable dtSource)
         {
             DataRow dr = dtSource.NewRow();
             dr["region"] = ml.Region;
@@ -119,7 +119,7 @@ namespace MarketScanner
             return dr;
         }
 
-        public static string ReplaceEscapeChars( string str )
+        public static string ReplaceEscapeChars(string str)
         {
             //If the string is null
             if (str == null)
@@ -132,21 +132,21 @@ namespace MarketScanner
             //Replaces single quote (') with two (2) single quotes ('')
             //solves the problem of inserting, updating or selecting a text with single quote (')
             //i.e.: Cox's Bazar, World's economy etc.
-            str = str.Replace( "'", "''" );
+            str = str.Replace("'", "''");
             return str;
         }
 
-        public static DataTable DataTableFromCompressedXmlFile( string sPath )
+        public static DataTable DataTableFromCompressedXmlFile(string sPath)
         {
             DataSet dsXml = new DataSet();
-            if (File.Exists( sPath ))
+            if (File.Exists(sPath))
             {
-                using (FileStream fs = new FileStream( sPath, FileMode.Open, FileAccess.Read ))
-                using (GZipStream zs = new GZipStream( fs, CompressionMode.Decompress ))
+                using (FileStream fs = new FileStream(sPath, FileMode.Open, FileAccess.Read))
+                using (GZipStream zs = new GZipStream(fs, CompressionMode.Decompress))
                 {
                     try
                     {
-                        dsXml.ReadXml( zs, XmlReadMode.Auto );
+                        dsXml.ReadXml(zs, XmlReadMode.Auto);
                     }
                     catch (System.Security.SecurityException ex)
                     {
@@ -159,21 +159,21 @@ namespace MarketScanner
             }
             else
             {
-                throw new Exception( "The compressed xml file doesn't exist: " + sPath );
+                throw new Exception("The compressed xml file doesn't exist: " + sPath);
             }
         }
 
-        public static XmlDocument FromCompressedXmlFile( string sPath )
+        public static XmlDocument FromCompressedXmlFile(string sPath)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            if (File.Exists( sPath ))
+            if (File.Exists(sPath))
             {
-                using (FileStream fs = new FileStream( sPath, FileMode.Open, FileAccess.Read ))
-                using (GZipStream zs = new GZipStream( fs, CompressionMode.Decompress ))
+                using (FileStream fs = new FileStream(sPath, FileMode.Open, FileAccess.Read))
+                using (GZipStream zs = new GZipStream(fs, CompressionMode.Decompress))
                 {
                     try
                     {
-                        xmlDoc.Load( zs );
+                        xmlDoc.Load(zs);
                         // dsXml.ReadXml( zs, XmlReadMode.Auto );
                     }
                     catch (System.Security.SecurityException ex)
@@ -186,7 +186,7 @@ namespace MarketScanner
             }
             else
             {
-                throw new Exception( "The compressed xml file doesn't exist: " + sPath );
+                throw new Exception("The compressed xml file doesn't exist: " + sPath);
             }
         }
 
@@ -196,14 +196,14 @@ namespace MarketScanner
         /// <param name="dtNames">Source datatable</param>
         /// <param name="readConquerableStationsFromApi">Wheter to load outposts</param>
         /// <returns></returns>
-        internal static SortedList<long, Tuple<string, string>> GetStationNames( DataTable dtNames, bool readConquerableStationsFromApi )
+        internal static SortedList<long, Tuple<string, string>> GetStationNames(DataTable dtNames, bool readConquerableStationsFromApi)
         {
             SortedList<long, Tuple<string, string>> sl = new SortedList<long, Tuple<string, string>>();
 
             // Get station names from datatable
             foreach (DataRow dr in dtNames.Rows)
             {
-                sl.Add( int.Parse( dr["stationID"].ToString() ), new Tuple<string, string>( dr["stationName"].ToString().Trim(), dr["corporationName"].ToString().Trim() ) );
+                sl.Add(int.Parse(dr["stationID"].ToString()), new Tuple<string, string>(dr["stationName"].ToString().Trim(), dr["corporationName"].ToString().Trim()));
             }
 
             // Load outposts from eveApi too
@@ -215,7 +215,7 @@ namespace MarketScanner
                 {
                     // First try to load outposts from eve api
                     EveApiRequest apiRequest = new EveApiRequest();
-                    xmlDoc = EveApiRequest.FetchXmlData( Values.APIBASE + Values.sApiConquerableStationListUrl );
+                    xmlDoc = EveApiRequest.FetchXmlData(Values.APIBASE + Values.sApiConquerableStationListUrl);
                 }
                 catch (Exception e)
                 {
@@ -223,7 +223,7 @@ namespace MarketScanner
                     Main.LightErrorMessage += "- Outpost names could not be loaded.\r\n\r\n";
                     Main.IsAppOffline = true;
                     // Try to load cached version if eve api fails
-                    try { outpostsLoaded = ReadCachedOutposts( ref xmlDoc ); }
+                    try { outpostsLoaded = ReadCachedOutposts(ref xmlDoc); }
                     catch (FileNotFoundException)
                     {
                         Main.LightErrorMessage += "- Local outpost cache not found either.\r\n Optionally disable option to fetch conquerable station names on program startup in File -> Options.\r\n";
@@ -231,11 +231,11 @@ namespace MarketScanner
                     if (outpostsLoaded)
                     {
                         Main.LightErrorMessage += "Loading alternative cached outpost list.\r\n";
-                        XmlNodeList nodesRetrievalTime = xmlDoc.SelectNodes( "//currentTime" );
+                        XmlNodeList nodesRetrievalTime = xmlDoc.SelectNodes("//currentTime");
                         if (nodesRetrievalTime != null && nodesRetrievalTime.Count > 0)
                         {
                             Main.LightErrorMessage += "- Note that this file might be outdated.\r\n";
-                            Main.LightErrorMessage += string.Format( "- Time of retrival: {0}\r\n", nodesRetrievalTime[0].InnerText );
+                            Main.LightErrorMessage += string.Format("- Time of retrival: {0}\r\n", nodesRetrievalTime[0].InnerText);
                         }
                         else
                         {
@@ -245,25 +245,25 @@ namespace MarketScanner
                 }
                 if (xmlDoc != null && xmlDoc.HasChildNodes)
                 {
-                    XmlNodeList nodes = xmlDoc.SelectNodes( "//result/rowset/row" ); // Get only the relevant rows
+                    XmlNodeList nodes = xmlDoc.SelectNodes("//result/rowset/row"); // Get only the relevant rows
                     if (nodes != null && nodes.Count > 0)
                     {
                         foreach (XmlNode node in nodes)
                         {
-                            long stationID = long.Parse( node.Attributes["stationID"].InnerText );
+                            long stationID = long.Parse(node.Attributes["stationID"].InnerText);
                             // some stations are Conquerable and therefore need to have the name updated from the outpost list
                             // So we have to check if its already in the list
-                            if (!sl.ContainsKey( stationID )) // Add the new outpost
+                            if (!sl.ContainsKey(stationID)) // Add the new outpost
                             {
-                                sl.Add( stationID, new Tuple<string, string>( node.Attributes["stationName"].InnerText, node.Attributes["corporationName"].InnerText ) );
+                                sl.Add(stationID, new Tuple<string, string>(node.Attributes["stationName"].InnerText, node.Attributes["corporationName"].InnerText));
                             }
                             else // if station is already in list then update with outpost name and corp
                             {
-                                sl[stationID] = new Tuple<string, string>( node.Attributes["stationName"].InnerText, node.Attributes["corporationName"].InnerText );
+                                sl[stationID] = new Tuple<string, string>(node.Attributes["stationName"].InnerText, node.Attributes["corporationName"].InnerText);
                             }
                         }
                         // Cache xml by writing a file to disk if eve api fetch was a success
-                        if (!outpostsLoaded) WriteCachedOutposts( xmlDoc );
+                        if (!outpostsLoaded) WriteCachedOutposts(xmlDoc);
                     }
                 }
             }
@@ -272,7 +272,7 @@ namespace MarketScanner
         }
 
         // Store the outpost xml from Eve api
-        private static void WriteCachedOutposts( XmlDocument document )
+        private static void WriteCachedOutposts(XmlDocument document)
         {
             FileHandler filehandler = new FileHandler();
             XmlWriterSettings writerSettings = new XmlWriterSettings();
@@ -281,21 +281,21 @@ namespace MarketScanner
             writerSettings.Encoding = System.Text.Encoding.UTF8;
             try
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create( filehandler.AppDataPath + Path.DirectorySeparatorChar + Values.OUTPOST_XML_CACHE_NAME, writerSettings ))
+                using (XmlWriter xmlWriter = XmlWriter.Create(filehandler.AppDataPath + Path.DirectorySeparatorChar + Values.OUTPOST_XML_CACHE_NAME, writerSettings))
                 {
-                    if (xmlWriter != null) document.Save( xmlWriter );
+                    if (xmlWriter != null) document.Save(xmlWriter);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show( ex.Message, "Error writing Outpost data" );
+                MessageBox.Show(ex.Message, "Error writing Outpost data");
             }
 
 
         }
 
         // retrieve the outpost xml stored locally
-        private static bool ReadCachedOutposts( ref XmlDocument document )
+        private static bool ReadCachedOutposts(ref XmlDocument document)
         {
             FileHandler filehandler = new FileHandler();
             document = new XmlDocument();
@@ -303,46 +303,58 @@ namespace MarketScanner
             //readerSettings.IgnoreWhitespace = true;
             try
             {
-                using (XmlReader xmlReader = XmlReader.Create( filehandler.AppDataPath + Path.DirectorySeparatorChar + Values.OUTPOST_XML_CACHE_NAME ))
+                using (XmlReader xmlReader = XmlReader.Create(filehandler.AppDataPath + Path.DirectorySeparatorChar + Values.OUTPOST_XML_CACHE_NAME))
                 {
-                    document.Load( xmlReader );
+                    document.Load(xmlReader);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show( ex.Message, "Error reading Outpost data" );
+                MessageBox.Show(ex.Message, "Error reading Outpost data");
             }
             return document.HasChildNodes;
         }
 
 
-        internal static Dictionary<int, string> GetRegionNames( DataTable dtNames )
+        internal static Dictionary<int, string> GetRegionNames(DataTable dtNames)
         {
             Dictionary<int, string> d = new Dictionary<int, string>();
             foreach (DataRow dr in dtNames.Rows)
             {
                 string sRegionName = dr["regionName"].ToString().Trim();
-                d.Add( int.Parse( dr["regionID"].ToString() ), sRegionName );
+                d.Add(int.Parse(dr["regionID"].ToString()), sRegionName);
+            }
+            return d;
+        }
+
+        internal static Dictionary<int, string> GetItemNames(XmlDocument domNames)
+        {
+            Dictionary<int, string> d = new Dictionary<int, string>();
+
+            XmlNodeList items = domNames.SelectNodes("//item");
+            foreach (XmlNode n in items)
+            {
+                d.Add(Convert.ToInt32(n.Attributes["id"].Value), n.Attributes["name"].Value);
             }
             return d;
         }
 
 
-        internal static bool GetSolarSystemsInfo( DataTable dtInputSystemSecurity, ref Dictionary<int, string> slSystemNames, ref Dictionary<int, double> dSystemSecurity )
+        internal static bool GetSolarSystemsInfo(DataTable dtInputSystemSecurity, ref Dictionary<int, string> slSystemNames, ref Dictionary<int, double> dSystemSecurity)
         {
-            CultureInfo ci = CultureInfo.GetCultureInfo( "en-US" );
+            CultureInfo ci = CultureInfo.GetCultureInfo("en-US");
             //Dictionary<int, double> d = new Dictionary<int, double>();
             foreach (DataRow dr in dtInputSystemSecurity.Rows)
             {
-                double dSec = Convert.ToDouble( dr["security"].ToString(), ci );
+                double dSec = Convert.ToDouble(dr["security"].ToString(), ci);
                 //dSec = double.Parse( dr["security"].ToString(), NumberStyles.AllowDecimalPoint, Ci );
-                int solarSystemID = int.Parse( dr["solarSystemID"].ToString() );
+                int solarSystemID = int.Parse(dr["solarSystemID"].ToString());
 
                 // Ad system security to dictionary
-                dSystemSecurity.Add( solarSystemID, dSec );
+                dSystemSecurity.Add(solarSystemID, dSec);
 
                 // Also create sorted list of system names now that we are looping the list anyway
-                slSystemNames.Add( solarSystemID, dr["solarSystemName"].ToString() );
+                slSystemNames.Add(solarSystemID, dr["solarSystemName"].ToString());
             }
             return dSystemSecurity.Count > 0 && slSystemNames.Count > 0;
         }
@@ -364,11 +376,11 @@ namespace MarketScanner
 
 
         // Split by Sellers and buyers
-        internal static void SplitLogEntries( ref DataTable dtLogEntries, ref DataView dvSellers, ref DataView dvBuyers )
+        internal static void SplitLogEntries(ref DataTable dtLogEntries, ref DataView dvSellers, ref DataView dvBuyers)
         {
-            dvSellers = new DataView( dtLogEntries, "bid = false", "price DESC", DataViewRowState.CurrentRows );
+            dvSellers = new DataView(dtLogEntries, "bid = false", "price DESC", DataViewRowState.CurrentRows);
 
-            dvBuyers = new DataView( dtLogEntries, "bid = true", "price ASC", DataViewRowState.CurrentRows );
+            dvBuyers = new DataView(dtLogEntries, "bid = true", "price ASC", DataViewRowState.CurrentRows);
         }
 
 
@@ -380,22 +392,191 @@ namespace MarketScanner
         // field 
         private DataTable _dtCsv;
 
-        public DataTable ProcessMarketLog( Stream strm, FileDataTypes iType, string sDataTableName, ref SortedList<long, Tuple<string, string>> slStationNames )
+        //TODO: unnecessary switch
+        public DataTable ProcessMarketLog(Stream strm, FileDataTypes iType, string sDataTableName, ref SortedList<long, Tuple<string, string>> slStationNames)
         {
             DataTable dtResult = null;
             switch ((FileDataTypes)iType)
             {
                 case FileDataTypes.Csv:
-                    dtResult = PopulateDataTableFromMarketLogDataFile( strm, sDataTableName, ref  slStationNames );
+                    dtResult = PopulateDataTableFromMarketLogDataFile(strm, sDataTableName, ref  slStationNames);
                     break;
             }
             return dtResult;
         }
 
-
-        private DataTable PopulateDataTableFromMarketLogDataFile( Stream strm, string sDataTableName, ref SortedList<long, Tuple<string, string>> slStationNames )
+        public DataTable ProcessCachedMarketLog(string sFilePath, string sDataTableName, ref SortedList<long, Tuple<string, string>> slStationNames)
         {
-            StreamReader srdr = new StreamReader( strm );
+            DataTable dtResult = CreateMarketLogEntriesTable(); ;
+
+            if (!File.Exists(sFilePath))
+                return null;
+
+            KeyValuePair<object, object> result = EveCacheParser.Parser.Parse(new FileInfo(sFilePath));
+
+            List<object> key = (List<object>)((Tuple<object>)result.Key).Item1;
+            long regionID = (long)key[2];
+            short typeID = (short)key[3];
+            List<object> value = (List<object>)((Dictionary<object, object>)result.Value)["lret"];
+            List<object> vv = (List<object>)value[0];
+            foreach (List<object> orders in value)
+            {
+                foreach (Dictionary<object, object> dict in orders)
+                {
+                    DataRow dRow = dtResult.NewRow();
+
+                    //price
+                    dRow["price"] = (double)dict["price"];
+
+                    //volRemaining
+                    double dQuantity = (double)dict["volRemaining"];
+                    if (dQuantity < Values.MinMarketQuantity) continue; // don't apply row if quantity is less than specified
+                    dRow["volRemaining"] = dQuantity;
+
+                    //typeID
+                    dRow["typeID"] = (int)dict["typeID"];
+
+                    //range
+                    #region range
+                    int iRange = int.MinValue;
+                    int i = 3;
+                    try
+                    {
+                        iRange = (int)(short)dict["range"];
+                    }
+                    catch (ArgumentNullException ex)
+                    {
+                        throw new Exception("Column '" + dtResult.Columns[i].ColumnName + "' in row " + i.ToString() + " is null!", ex);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        throw new Exception("Column '" + dtResult.Columns[i].ColumnName + "' in row " + i.ToString() + " has bad argument!", ex);
+                    }
+                    catch (OverflowException ex)
+                    {
+                        throw new Exception("Overflow in trying to parse row " + i.ToString() + "in column '" + dtResult.Columns[i].ColumnName + "'!", ex);
+                    }
+                    catch (FormatException ex)
+                    {
+                        throw new Exception("Column '" + dtResult.Columns[i].ColumnName + "' in row " + i.ToString() + " has bad format!", ex);
+                    }
+                    switch (iRange)
+                    {
+                        case -1:
+                            dRow["range"] = "Station";
+                            break;
+                        case 0:
+                            dRow["range"] = "System";
+                            break;
+                        case 32767:
+                            dRow["range"] = "Region";
+                            break;
+                        default:
+                            dRow["range"] = dict["range"] + " Jumps";
+                            break;
+                    }
+                    #endregion
+
+                    //orderID
+                    dRow["orderID"] = (long)dict["orderID"];
+
+                    //volEntered
+                    dRow["volEntered"] = (int)dict["volEntered"];
+
+                    //minVolume
+                    dRow["minVolume"] = (int)dict["minVolume"];
+
+                    //bid
+                    dRow["bid"] = (bool)dict["bid"];
+
+                    //issueDate
+                    System.DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                    long unixtime = ((long)dict["issueDate"] - 116444736000000000) / 10000000;
+                    dRow["issued"] = dt.AddSeconds(unixtime).ToUniversalTime();
+
+                    //duration
+                    dRow["duration"] = (int)(short)dict["duration"];
+
+                    //stationID, stationName, corporationName
+                    int iStationID = 0;
+                    dRow["stationID"] = iStationID = (int)dict["stationID"];
+                    // set column[14] and column[17] to station and corp name based on id in column[10]
+                    // Check if the station id exits in station name list
+                    if (slStationNames.ContainsKey(iStationID))
+                    {
+                        dRow["stationName"] = slStationNames[iStationID].Item1;
+                        dRow["corporationName"] = slStationNames[iStationID].Item2;
+                    }
+                    else // StationID not found so give error message if not offline
+                    {
+                        if (!Main.IsAppOffline)
+                        {
+                            Main.LightErrorMessage += string.Format("The station with id {0} was not found in the database.\r\nYou should check \"Get outpost names from Eve API\" under File->Options.\r\n", iStationID);
+                        }
+                    }
+
+                    //regionID
+                    dRow["regionID"] = (int)dict["regionID"];
+
+                    //solarSystemID
+                    int iSolarSystemID = (int)dict["solarSystemID"];
+                    dRow["solarSystemID"] = iSolarSystemID;
+                    string sCurrentSystem = Values.slSolarSystems[iSolarSystemID];
+                    if (Values.ExeptedSystems.Contains(sCurrentSystem)) continue;
+
+                    //jumps
+                    switch (dict["jumps"].ToString())
+                    {
+                        case "0":
+                            dRow["jumps"] = "System";
+                            break;
+                        default:
+                            dRow["jumps"] = dict["jumps"].ToString();
+                            break;
+                    }
+
+
+                    //expires
+                    DateTime dateIssued = (DateTime)dRow["issued"];
+                    int iDuration = (int)dRow["duration"];
+                    // Calculate difference from now using eve time UTC
+                    TimeSpan ts = dateIssued.AddDays(iDuration).Subtract(DateTime.UtcNow);
+                    dRow["expires"] = ts.Days.ToString() + "D " + ts.Hours.ToString() + "H " + ts.Minutes.ToString() + "M " + ts.Seconds.ToString() + "S";
+                    // If time is negative, mark row with error
+                    if (ts.Ticks < 0)
+                    {
+                        if (Values.IgnoreExpiredOrders) continue; // Ignore orders expired, if set in options
+                        dRow.SetColumnError(dtResult.Columns[8], Values.ORDER_DATE_EXPIRED);
+                        dRow["expires"] = "---";
+                    }
+
+                    //security
+                    try
+                    {
+                        //if (dRow["solarSystemID"] != System.DBNull.Value)
+                        //{
+                        double dSec = Values.dSystemSecurity[(int)dRow["solarSystemID"]];
+                        // dRow[12] being the solarSystemID
+                        // Filter log entries by system security status.
+                        if (SecurityFilter(dSec)) continue;
+                        dRow["Security"] = dSec;
+                        //}
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        MarketScanner.Main.LightErrorMessage += string.Format("Error finding system with ID: {1} {0}", Environment.NewLine, dRow["solarSystemId"].ToString());
+                        continue;
+                    }
+                    dtResult.Rows.Add(dRow);
+                }
+            }
+            return dtResult;
+        }
+
+
+        private DataTable PopulateDataTableFromMarketLogDataFile(Stream strm, string sDataTableName, ref SortedList<long, Tuple<string, string>> slStationNames)
+        {
+            StreamReader srdr = new StreamReader(strm);
             Int32 iLineCount = 0;
             do
             {
@@ -405,32 +586,32 @@ namespace MarketScanner
                 if (0 == iLineCount++)
                     _dtCsv = CreateMarketLogEntriesTable();
                 if (iLineCount > 1)
-                    this.AddMarketLogEntryDataRowToTable( sLine, _dtCsv, ref slStationNames );
+                    this.AddMarketLogEntryDataRowToTable(sLine, _dtCsv, ref slStationNames);
             } while (true);
             return _dtCsv;
         }
 
-        private void AddMarketLogEntryDataRowToTable( String CSVLine, DataTable dt, ref SortedList<long, Tuple<string, string>> slStationNames )
+        private void AddMarketLogEntryDataRowToTable(String CSVLine, DataTable dt, ref SortedList<long, Tuple<string, string>> slStationNames)
         {
-            String[] strVals = CSVLine.Split( new char[] { ',' } );
+            String[] strVals = CSVLine.Split(new char[] { ',' });
             DataRow dRow = dt.NewRow();
-            CultureInfo ci = CultureInfo.GetCultureInfo( "en-US" ); // The culture of the marketlogs from Eve
-            for (int i = 0 ; i < dt.Columns.Count ; i++)
+            CultureInfo ci = CultureInfo.GetCultureInfo("en-US"); // The culture of the marketlogs from Eve
+            for (int i = 0; i < dt.Columns.Count; i++)
             {
                 Type tRowType = dt.Columns[i].DataType;
                 switch (dt.Columns[i].ColumnName)
                 {
                     case "solarSystemID":
                         // Filter on unwanted solar systems
-                        dRow[i] = Convert.ChangeType( strVals[i].Trim(), tRowType, ci );
-                        int iSolarSystemID = int.Parse( strVals[i].Trim() );
+                        dRow[i] = Convert.ChangeType(strVals[i].Trim(), tRowType, ci);
+                        int iSolarSystemID = int.Parse(strVals[i].Trim());
                         string sCurrentSystem = Values.slSolarSystems[iSolarSystemID];
-                        if (Values.ExeptedSystems.Contains( sCurrentSystem )) return;
+                        if (Values.ExeptedSystems.Contains(sCurrentSystem)) return;
                         break;
 
 
                     case "volRemaining":
-                        double dQuantity = Double.Parse( strVals[i].Trim(), ci );
+                        double dQuantity = Double.Parse(strVals[i].Trim(), ci);
                         if (dQuantity < Values.MinMarketQuantity) return; // don't apply row if quantity is less than specified
                         dRow[i] = dQuantity;//string.Format(Ci, "{0:0,0}", dQuantity);
                         break;
@@ -446,15 +627,15 @@ namespace MarketScanner
                         }
                         break;
                     case "price":
-                        dRow[i] = Double.Parse( strVals[i].Trim(), ci );
+                        dRow[i] = Double.Parse(strVals[i].Trim(), ci);
                         break;
                     case "stationID":// if column is the stationID, then also find the station name
                         int iStationID = 0;
-                        dRow[i] = iStationID = int.Parse( strVals[i].Trim() );
+                        dRow[i] = iStationID = int.Parse(strVals[i].Trim());
                         // set column[14] and column[17] to station and corp name based on id in column[10]
 
                         // Check if the station id exits in station name list
-                        if (slStationNames.ContainsKey( iStationID ))
+                        if (slStationNames.ContainsKey(iStationID))
                         {
                             dRow[i + 4] = slStationNames[iStationID].Item1;
                             dRow[i + 7] = slStationNames[iStationID].Item2;
@@ -463,7 +644,7 @@ namespace MarketScanner
                         {
                             if (!Main.IsAppOffline)
                             {
-                                Main.LightErrorMessage += string.Format( "The station with id {0} was not found in the database.\r\nYou should check \"Get outpost names from Eve API\" under File->Options.\r\n", iStationID );
+                                Main.LightErrorMessage += string.Format("The station with id {0} was not found in the database.\r\nYou should check \"Get outpost names from Eve API\" under File->Options.\r\n", iStationID);
                             }
                         }
                         break;
@@ -477,23 +658,23 @@ namespace MarketScanner
                         int iRange = int.MinValue;
                         try
                         {
-                            iRange = int.Parse( strVals[i].Trim() );
+                            iRange = int.Parse(strVals[i].Trim());
                         }
                         catch (ArgumentNullException ex)
                         {
-                            throw new Exception( "Column '" + dt.Columns[i].ColumnName + "' in row " + i.ToString() + " is null!", ex );
+                            throw new Exception("Column '" + dt.Columns[i].ColumnName + "' in row " + i.ToString() + " is null!", ex);
                         }
                         catch (ArgumentException ex)
                         {
-                            throw new Exception( "Column '" + dt.Columns[i].ColumnName + "' in row " + i.ToString() + " has bad argument!", ex );
+                            throw new Exception("Column '" + dt.Columns[i].ColumnName + "' in row " + i.ToString() + " has bad argument!", ex);
                         }
                         catch (OverflowException ex)
                         {
-                            throw new Exception( "Overflow in trying to parse row " + i.ToString() + "in column '" + dt.Columns[i].ColumnName + "'!", ex );
+                            throw new Exception("Overflow in trying to parse row " + i.ToString() + "in column '" + dt.Columns[i].ColumnName + "'!", ex);
                         }
                         catch (FormatException ex)
                         {
-                            throw new Exception( "Column '" + dt.Columns[i].ColumnName + "' in row " + i.ToString() + " has bad format!", ex );
+                            throw new Exception("Column '" + dt.Columns[i].ColumnName + "' in row " + i.ToString() + " has bad format!", ex);
                         }
                         switch (iRange)
                         {
@@ -515,13 +696,13 @@ namespace MarketScanner
                         DateTime dateIssued = (DateTime)dRow["issued"];
                         int iDuration = (int)dRow["duration"];
                         // Calculate difference from now using eve time UTC
-                        TimeSpan ts = dateIssued.AddDays( iDuration ).Subtract( DateTime.UtcNow );
+                        TimeSpan ts = dateIssued.AddDays(iDuration).Subtract(DateTime.UtcNow);
                         dRow[i] = ts.Days.ToString() + "D " + ts.Hours.ToString() + "H " + ts.Minutes.ToString() + "M " + ts.Seconds.ToString() + "S";
                         // If time is negative, mark row with error
                         if (ts.Ticks < 0)
                         {
                             if (Values.IgnoreExpiredOrders) return; // Ignore orders expired, if set in options
-                            dRow.SetColumnError( dt.Columns[i], Values.ORDER_DATE_EXPIRED );
+                            dRow.SetColumnError(dt.Columns[i], Values.ORDER_DATE_EXPIRED);
                             dRow[i] = "---";
                         }
                         break;
@@ -533,22 +714,22 @@ namespace MarketScanner
                             double dSec = Values.dSystemSecurity[(int)dRow["solarSystemID"]];
                             // dRow[12] being the solarSystemID
                             // Filter log entries by system security status.
-                            if (SecurityFilter( dSec )) return;
+                            if (SecurityFilter(dSec)) return;
                             dRow[i] = dSec;
                             //}
                         }
                         catch (KeyNotFoundException)
                         {
-                            MarketScanner.Main.LightErrorMessage += string.Format( "Error finding system with ID: {1} {0}", Environment.NewLine, dRow[12].ToString() );
+                            MarketScanner.Main.LightErrorMessage += string.Format("Error finding system with ID: {1} {0}", Environment.NewLine, dRow[12].ToString());
                             return;
                         }
                         break;
                     default:
-                        dRow[i] = Convert.ChangeType( strVals[i].Trim(), tRowType, ci );
+                        dRow[i] = Convert.ChangeType(strVals[i].Trim(), tRowType, ci);
                         break;
                 }
             }
-            dt.Rows.Add( dRow );
+            dt.Rows.Add(dRow);
             return;
         }
 
@@ -558,7 +739,7 @@ namespace MarketScanner
         /// </summary>
         /// <param name="dSec">The security status that we want to check</param>
         /// <returns>True if the input is less than the stored Values.MinSystemSecurity</returns>
-        private bool SecurityFilter( double dSec )
+        private bool SecurityFilter(double dSec)
         {
             // 0.0 will show all sec systems also below 0.0
             // if (Values.MinSystemSecurity == 0.0) return false; 
@@ -567,6 +748,7 @@ namespace MarketScanner
         }
 
         #endregion
+
 
     }
 }

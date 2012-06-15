@@ -22,26 +22,26 @@ namespace MarketScanner
             this.cbIgnoreExpiredOrders.Checked = Values.IgnoreExpiredOrders;
         }
 
-        private void butOptionsCancel_Click( object sender, EventArgs e )
+        private void butOptionsCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void butOptionsSave_Click( object sender, EventArgs e )
+        private void butOptionsSave_Click(object sender, EventArgs e)
         {
             // Validate app settings, save and close.
             // Validate Path
             string sPath = this.tbMarketlogsPath.Text;
-            if (Values.IsPathValid( sPath ))
+            if (Values.IsPathValid(sPath))
             {
                 Values.MarketLogPath = sPath;
                 // Reload path for event listening
-                ((Main)this.Owner).FSWatcher.Path = Values.MarketLogPath;
+                ((Main)this.Owner).FSWatcherLogs.Path = Values.MarketLogPath;
                 bNeedLogReload = true;
             }
             else
             {
-                MessageBox.Show( "The path (" + sPath + ") is not valid!", Values.MSG_ERROR );
+                MessageBox.Show("The path (" + sPath + ") is not valid!", Values.MSG_ERROR);
                 return;
             }
             // save other options
@@ -50,7 +50,7 @@ namespace MarketScanner
             // refresh stations if this is checked
             if (this.cbReadConquerableStationsFromApi.Checked)
             {
-                Values.slStationNames = DataHandler.GetStationNames( Values.dtStationNames, Values.ReadConquerableStationsFromApi );
+                Values.slStationNames = DataHandler.GetStationNames(Values.dtStationNames, Values.ReadConquerableStationsFromApi);
             }
             // if a filter option has changed, then refresh logs and regions
             if (Values.LogsDateFilter != this.dtpLogDateFilter.Value.Date ||
@@ -66,7 +66,10 @@ namespace MarketScanner
             }
 
             // reload logs if necessary
-            if (bNeedLogReload) ReloadLogs();
+            if (bNeedLogReload)
+            {
+                ReloadLogs();
+            }
 
             //Exit
             this.Close();
@@ -74,11 +77,19 @@ namespace MarketScanner
 
         private void ReloadLogs()
         {
-            ((Main)this.Owner).ReloadMarketLogs();
+            if (Values.UseCacheReader)
+            {
+                ((Main)this.Owner).ReloadMarketLogsFromCache();
+            }
+            else
+            {
+                ((Main)this.Owner).ReloadMarketLogs();
+
+            }
             ((Main)this.Owner).RefreshRegions();
         }
 
-        private void butOptionsBrowse_Click( object sender, EventArgs e )
+        private void butOptionsBrowse_Click(object sender, EventArgs e)
         {
             if (DialogResult.OK == folderBrowserDialog1.ShowDialog())
             {
@@ -86,7 +97,7 @@ namespace MarketScanner
             }
         }
 
-        private void butOptionsSetDefault_Click( object sender, EventArgs e )
+        private void butOptionsSetDefault_Click(object sender, EventArgs e)
         {
             Values.MarketLogPath = this.tbMarketlogsPath.Text = Values.sDefaultMarketLogPath;
         }

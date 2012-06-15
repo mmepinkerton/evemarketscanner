@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveMarketScanner", "EveMark
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupDeployment", "SetupDeployment\SetupDeployment.vdproj", "{A91F402A-7A08-46AB-A2FB-1AC9EEDF7F2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegionColumnTest", "RegionColumnTest\RegionColumnTest.csproj", "{C5F5A710-3E00-4041-87B5-7A6970677949}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +18,6 @@ Global
 		{A91F402A-7A08-46AB-A2FB-1AC9EEDF7F2D}.Debug|Any CPU.ActiveCfg = Debug
 		{A91F402A-7A08-46AB-A2FB-1AC9EEDF7F2D}.Release|Any CPU.ActiveCfg = Release
 		{A91F402A-7A08-46AB-A2FB-1AC9EEDF7F2D}.Release|Any CPU.Build.0 = Release
-		{C5F5A710-3E00-4041-87B5-7A6970677949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5F5A710-3E00-4041-87B5-7A6970677949}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5F5A710-3E00-4041-87B5-7A6970677949}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

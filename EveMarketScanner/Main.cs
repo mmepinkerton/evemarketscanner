@@ -42,15 +42,15 @@ namespace MarketScanner
             string[] arguments = Environment.GetCommandLineArgs();
             foreach (string argument in arguments)
             {
-                if (argument.Split( '=' )[0].ToLower() == "/u")
+                if (argument.Split('=')[0].ToLower() == "/u")
                 {
-                    string guid = argument.Split( '=' )[1];
-                    string path = Environment.GetFolderPath( Environment.SpecialFolder.System );
-                    ProcessStartInfo si = new ProcessStartInfo( path + "\\msiexec.exe", "/i " + guid );
-                    Process.Start( si );
+                    string guid = argument.Split('=')[1];
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.System);
+                    ProcessStartInfo si = new ProcessStartInfo(path + "\\msiexec.exe", "/i " + guid);
+                    Process.Start(si);
                     this.Close();
                     Application.Exit();
-                    Environment.Exit( 0 ); // Brute force Exit, to avoid any exeptions when uninstaller starts
+                    Environment.Exit(0); // Brute force Exit, to avoid any exeptions when uninstaller starts
                 }
             }
             // End Uninstall Code ---------------
@@ -68,7 +68,7 @@ namespace MarketScanner
             /* Initialize */
 
             // version
-            String[] arrVersion = Application.ProductVersion.Split( '.' );
+            String[] arrVersion = Application.ProductVersion.Split('.');
             string sIsDebug = string.Empty;
             // Insert debug string in version
 #if (DEBUG)
@@ -76,7 +76,7 @@ namespace MarketScanner
 #endif
             this.Text = Values.APP_TITLE;
             this.Text += sIsDebug;
-            this.Text += string.Format( " v{0}.{1}.{2}", arrVersion );
+            this.Text += string.Format(" v{0}.{1}.{2}", arrVersion);
 
 
             // Make reference arrray of region combos
@@ -118,36 +118,54 @@ namespace MarketScanner
             // Set initial values on controls
             _iMinQuantityFilter = Values.MinMarketQuantity; // Restore last entered value
             //tbMinQuantity.Text = string.Format(_ci, "{0:#,0}", _iMinQuantityFilter); ### Requires Boxing, so used alternate without boxing below:
-            tbMinQuantity.Text = _iMinQuantityFilter.ToString( "#,0", _ci );
+            tbMinQuantity.Text = _iMinQuantityFilter.ToString("#,0", _ci);
 
             // Fill the system security dropdown with standard values
             this.DoSecurityComboFill();
 
             // Fill the Bargain finder dropdowns and set tooltips
             this.DoBargainComboFill();
-            ToolTipsInfo.SetToolTip( cbBargainTypeL, Values.BARGAIN_FINDER_INFO );
-            ToolTipsInfo.SetToolTip( cbBargainTypeR, Values.BARGAIN_FINDER_INFO );
+            ToolTipsInfo.SetToolTip(cbBargainTypeL, Values.BARGAIN_FINDER_INFO);
+            ToolTipsInfo.SetToolTip(cbBargainTypeR, Values.BARGAIN_FINDER_INFO);
 
             // Set path for logs
             try
             {
-                FSWatcher.Path = Values.MarketLogPath;
+                FSWatcherLogs.Path = Values.MarketLogPath;
             }
             catch (Exception ex)
             {
-                MessageBox.Show( ex.Message, Values.MSG_ERROR );
+                MessageBox.Show(ex.Message, Values.MSG_ERROR);
+            }
+
+            // Set path for cache
+            try
+            {
+                FSWatcherCache.Path = Values.CachedMethodCallsPath;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Values.MSG_ERROR);
             }
 
             #region Bind Events
 
             //Handler for Changed Event
-            this.FSWatcher.Changed += FSWatcher_Changed;
+            this.FSWatcherLogs.Changed += FSWatcher_Changed;
             //Handler for Created Event
-            this.FSWatcher.Created += FSWatcher_Created;
+            this.FSWatcherLogs.Created += FSWatcher_Created;
             //Handler for Deleted Event
-            this.FSWatcher.Deleted += FSWatcher_Deleted;
+            this.FSWatcherLogs.Deleted += FSWatcher_Deleted;
             //Handler for Renamed Event
-            this.FSWatcher.Renamed += FSWatcher_Renamed;
+            this.FSWatcherLogs.Renamed += FSWatcher_Renamed;
+            //Handler for Changed Event
+            this.FSWatcherCache.Changed += FSWatcherCache_Changed;
+            //Handler for Created Event
+            this.FSWatcherCache.Created += FSWatcherCache_Created;
+            //Handler for Deleted Event
+            this.FSWatcherCache.Deleted += FSWatcherCache_Deleted;
+            //Handler for Renamed Event
+            this.FSWatcherCache.Renamed += FSWatcherCache_Renamed;
             // Form Closing event
             this.FormClosing += Main_FormClosing;
 
@@ -204,7 +222,7 @@ namespace MarketScanner
         /// <summary>
         /// Event occurs when the contents of a File or Directory are changed
         /// </summary>
-        private void FSWatcher_Changed( object sender, System.IO.FileSystemEventArgs e )
+        private void FSWatcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             //lblEventType.Text = "Last Changed marketlog:";
             //code here for newly changed file or directory
@@ -213,10 +231,10 @@ namespace MarketScanner
         /// <summary>
         /// Event occurs when the a File or Directory is created
         /// </summary>
-        private void FSWatcher_Created( object sender, System.IO.FileSystemEventArgs e )
+        private void FSWatcher_Created(object sender, System.IO.FileSystemEventArgs e)
         {
             //code here for newly created file or directory
-            toolStripLogFileStatus.Text = string.Format( " Last {0} marketlog: {1}", e.ChangeType.ToString().ToLower(), e.Name );
+            toolStripLogFileStatus.Text = string.Format(" Last {0} marketlog: {1}", e.ChangeType.ToString().ToLower(), e.Name);
             ReloadMarketLogs();
             // Indicate that a file has been added
             lblItemsChanged.Visible = true;
@@ -224,19 +242,54 @@ namespace MarketScanner
         /// <summary>
         /// Event occurs when the a File or Directory is deleted
         /// </summary>
-        private void FSWatcher_Deleted( object sender, System.IO.FileSystemEventArgs e )
+        private void FSWatcher_Deleted(object sender, System.IO.FileSystemEventArgs e)
         {
             //code here for newly deleted file or directory
-            toolStripLogFileStatus.Text = string.Format( " Last {0} marketlog: {1}", e.ChangeType.ToString().ToLower(), e.Name );
+            toolStripLogFileStatus.Text = string.Format(" Last {0} marketlog: {1}", e.ChangeType.ToString().ToLower(), e.Name);
             ReloadMarketLogs();
         }
         /// <summary>
         /// Event occurs when the a File or Directory is renamed
         /// </summary>
-        private void FSWatcher_Renamed( object sender, System.IO.RenamedEventArgs e )
+        private void FSWatcher_Renamed(object sender, System.IO.RenamedEventArgs e)
         {
             //code here for newly renamed file or directory
-            toolStripLogFileStatus.Text = string.Format( " Last {0} marketlog: {1}", e.ChangeType.ToString().ToLower(), e.Name );
+            toolStripLogFileStatus.Text = string.Format(" Last {0} marketlog: {1}", e.ChangeType.ToString().ToLower(), e.Name);
+        }
+
+
+        /* DEFINE WATCHER EVENTS... */
+        /// <summary>
+        /// Event occurs when the contents of a File or Directory are changed
+        /// </summary>
+        private void FSWatcherCache_Changed(object sender, System.IO.FileSystemEventArgs e)
+        {
+            //lblEventType.Text = "Last Changed marketlog:";
+            //code here for newly changed file or directory
+            ReloadMarketLogsFromCache();
+            // Indicate that a file has been added
+            lblItemsChanged.Visible = true;
+        }
+        /// <summary>
+        /// Event occurs when a File or Directory is created
+        /// </summary>
+        private void FSWatcherCache_Created(object sender, System.IO.FileSystemEventArgs e)
+        {
+            //code here for newly created file or directory
+        }
+        /// <summary>
+        /// Event occurs when a File or Directory is deleted
+        /// </summary>
+        private void FSWatcherCache_Deleted(object sender, System.IO.FileSystemEventArgs e)
+        {
+            //code here for newly deleted file or directory
+        }
+        /// <summary>
+        /// Event occurs when a File or Directory is renamed
+        /// </summary>
+        private void FSWatcherCache_Renamed(object sender, System.IO.RenamedEventArgs e)
+        {
+            //code here for newly renamed file or directory
         }
 
         #endregion
@@ -251,15 +304,15 @@ namespace MarketScanner
         {
             if (LightErrorMessage == string.Empty || _isAnyMessageboxesOpen) return;
 
-            LightErrorMessage += string.Format( "{0}{1} can continue...", Environment.NewLine, Values.APP_TITLE );
+            LightErrorMessage += string.Format("{0}{1} can continue...", Environment.NewLine, Values.APP_TITLE);
             _isAnyMessageboxesOpen = true;
-            MessageBox.Show( this, LightErrorMessage, "Non-critical error occcured" );
+            MessageBox.Show(this, LightErrorMessage, "Non-critical error occcured");
             _isAnyMessageboxesOpen = false;
             LightErrorMessage = string.Empty;
         }
 
         // overload for event handling
-        private void LightErrorHandler( object sender, EventArgs e ) { LightErrorHandler(); }
+        private void LightErrorHandler(object sender, EventArgs e) { LightErrorHandler(); }
 
 
 
@@ -276,23 +329,26 @@ namespace MarketScanner
             {
                 MarketLog ml;
                 Parser p = new Parser();
-                DirectoryInfo di = new DirectoryInfo( Values.MarketLogPath );
+                DirectoryInfo di = new DirectoryInfo(Values.MarketLogPath);
                 Hashtable htItems = _htAvailLogItems;
+
+                //reset market logs
+                Values.dtMarketLogsListTable = DataHandler.CreateMarketLogsListTable();
 
                 foreach (FileInfo fi in di.GetFiles())
                 {
-                    ml = p.parseMarketLog( fi, ref Values.dRegionNames );
+                    ml = p.parseMarketLog(fi, ref Values.dRegionNames);
                     if (ml != null)
                     {
-                        Values.dtMarketLogsListTable.Rows.Add( DataHandler.MarketLogToDataRow( ml, Values.dtMarketLogsListTable ) );
+                        Values.dtMarketLogsListTable.Rows.Add(DataHandler.MarketLogToDataRow(ml, Values.dtMarketLogsListTable));
                         // make list for item selection combobox, filter by date created from options
-                        if (!htItems.Contains( ml.ItemHash ))
+                        if (!htItems.Contains(ml.ItemHash))
                         {
                             // If Date filtering is set and logs created date is less than set date, then skip it.
                             if (Values.IsLogsDateFilterSet && ml.Created < Values.LogsDateFilter)
                             { /* skip */ }
                             else
-                                htItems.Add( ml.ItemHash, ml );
+                                htItems.Add(ml.ItemHash, ml);
                         }
                     }
                     // Step the progress bar
@@ -303,10 +359,10 @@ namespace MarketScanner
                 // Put the unique item in an arraylist to sort and use as datasource for combobox
                 ArrayList alItems = new ArrayList();
                 MarketLog mlFirstInlistMessage = new MarketLog { Item = "!!!" };
-                alItems.Insert( 0, mlFirstInlistMessage );
-                alItems.InsertRange( 1, htItems.Values );
-                MarketLogComparer compareOn = new MarketLogComparer( MarketLogCompareField.Item );
-                alItems.Sort( compareOn );
+                alItems.Insert(0, mlFirstInlistMessage);
+                alItems.InsertRange(1, htItems.Values);
+                MarketLogComparer compareOn = new MarketLogComparer(MarketLogCompareField.Item);
+                alItems.Sort(compareOn);
 
                 // Check for any items at all
                 _isMarketlogsLoaded = alItems.Count > 1;
@@ -317,13 +373,13 @@ namespace MarketScanner
             }
             catch (Exception ex)
             {
-                MessageBox.Show( ex.Message, Values.MSG_ERROR );
+                MessageBox.Show(ex.Message, Values.MSG_ERROR);
             }
             // Clear the progressbar
             toolStripProgressBar1.Value = 0;
 
             // Load the market tree view
-            if (!splitContainerMain.Panel1Collapsed && _isMarketlogsLoaded) ItemTreeView.LoadTreeView( ref _htAvailLogItems );
+            if (!splitContainerMain.Panel1Collapsed && _isMarketlogsLoaded) ItemTreeView.LoadTreeView(ref _htAvailLogItems);
 
             LightErrorHandler();
         }
@@ -341,10 +397,10 @@ namespace MarketScanner
             LoadMarketLogs();
 
             // Set the previously selected item
-            if (EnableBargainCombos( _iItemSelectedHash != 0 ))
+            if (EnableBargainCombos(_iItemSelectedHash != 0))
             {
                 MarketLog ml;
-                for (int i = 0 ; i < cbItems.Items.Count ; i++)
+                for (int i = 0; i < cbItems.Items.Count; i++)
                 {
                     ml = (MarketLog)cbItems.Items[i];
                     if (ml.ItemHash == _iItemSelectedHash)
@@ -362,29 +418,140 @@ namespace MarketScanner
 
 
         /// <summary>
+        /// The initial load of Market logs from cache files. 
+        /// ...
+        /// TODO: write the rest...
+        /// ...
+        /// Fills the item ComboBox.
+        /// </summary>
+        private void LoadMarketLogsFromCache()
+        {
+            try
+            {
+                MarketLog ml;
+                Parser p = new Parser();
+
+                //reset market logs
+                Values.dtMarketLogsListTable = DataHandler.CreateMarketLogsListTable();
+
+                EveCacheParser.Parser.SetCachedFilesFolders("CachedMethodCalls");
+                EveCacheParser.Parser.SetIncludeMethodsFilter("GetOrders");
+                FileInfo[] cachedFiles = EveCacheParser.Parser.GetMachoNetCachedFiles();
+                DirectoryInfo di = new DirectoryInfo(Values.MarketLogPath + "\\Cache");
+                if (!di.Exists)
+                    di.Create();
+                Hashtable htItems = _htAvailLogItems;
+
+                //EVEMon's integrated unified uploader deletes cache files so we have to protect them
+                foreach (FileInfo fi in cachedFiles)
+                {
+                    fi.CopyTo(Values.MarketLogPath + "\\Cache\\" + fi.Name, true);
+                }
+
+                foreach (FileInfo fi in di.GetFiles())
+                {
+                    ml = p.parseCachedMarketLog(fi, ref Values.dRegionNames);
+                    if (ml != null)
+                    {
+                        Values.dtMarketLogsListTable.Rows.Add(DataHandler.MarketLogToDataRow(ml, Values.dtMarketLogsListTable));
+                        // make list for item selection combobox, filter by date created from options
+                        if (!htItems.Contains(ml.ItemHash))
+                        {
+                            // If Date filtering is set and logs created date is less than set date, then skip it.
+                            if (Values.IsLogsDateFilterSet && ml.Created < Values.LogsDateFilter)
+                            { /* skip */ }
+                            else
+                                htItems.Add(ml.ItemHash, ml);
+                        }
+                    }
+                    // Step the progress bar
+                    toolStripProgressBar1.PerformStep();
+                    //pbGeneralProgressbar.PerformStep();
+                }
+
+                // Put the unique item in an arraylist to sort and use as datasource for combobox
+                ArrayList alItems = new ArrayList();
+                MarketLog mlFirstInlistMessage = new MarketLog { Item = "!!!" };
+                alItems.Insert(0, mlFirstInlistMessage);
+                alItems.InsertRange(1, htItems.Values);
+                MarketLogComparer compareOn = new MarketLogComparer(MarketLogCompareField.Item);
+                alItems.Sort(compareOn);
+
+                // Check for any items at all
+                _isMarketlogsLoaded = alItems.Count > 1;
+                mlFirstInlistMessage.Item = _isMarketlogsLoaded ? Values.MSG_SELECT_ITEM : Values.MSG_NO_LOGS;
+
+                cbItems.DataSource = alItems;
+                cbItems.MaxDropDownItems = 25;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Values.MSG_ERROR);
+            }
+            // Clear the progressbar
+            toolStripProgressBar1.Value = 0;
+
+            // Load the market tree view
+            if (!splitContainerMain.Panel1Collapsed && _isMarketlogsLoaded) ItemTreeView.LoadTreeView(ref _htAvailLogItems);
+
+            LightErrorHandler();
+        }
+
+        internal void ReloadMarketLogsFromCache()
+        {
+            int iNewIndex = 0;
+
+            // Clear the item hash table
+            if (!splitContainerMain.Panel1Collapsed) _htAvailLogItems.Clear();
+
+            // Reload all the logs 
+            // TODO: Too Expensive.. find a smarter incremental way. Only load the new file
+            LoadMarketLogsFromCache();
+
+            // Set the previously selected item
+            if (EnableBargainCombos(_iItemSelectedHash != 0))
+            {
+                MarketLog ml;
+                for (int i = 0; i < cbItems.Items.Count; i++)
+                {
+                    ml = (MarketLog)cbItems.Items[i];
+                    if (ml.ItemHash == _iItemSelectedHash)
+                    {
+                        iNewIndex = i;
+                        break;
+                    }
+                }
+                // Set the selected index or 0
+                cbItems.SelectedIndex = iNewIndex;
+            }
+
+            LightErrorHandler();
+        }
+
+        /// <summary>
         /// Populates the marketlog views.
         /// </summary>
         /// <param name="mlSelected">The selected marketlog</param>
         /// <param name="bValidItem">If the marketlog is a valid Marketlog object</param>
-        private bool MarketItemSelected( MarketLog mlSelected, bool bValidItem )
+        private bool MarketItemSelected(MarketLog mlSelected, bool bValidItem)
         {
-            if (EnableBargainCombos( bValidItem ))
+            if (EnableBargainCombos(bValidItem))
             {
                 MarketLog mlChosenItem = mlSelected;
-                string sItem = DataHandler.ReplaceEscapeChars( mlChosenItem.Item );
+                string sItem = DataHandler.ReplaceEscapeChars(mlChosenItem.Item);
 
                 // Save Item hash for reselection if list changes
                 _iItemSelectedHash = mlChosenItem.ItemHash;
                 lblItemsChanged.Visible = false; // Reset notification
 
-                DataRow[] drFoundRows = Values.dtMarketLogsListTable.Select( "item = \'" + sItem + "\'", "region DESC, created DESC" );
+                DataRow[] drFoundRows = Values.dtMarketLogsListTable.Select("item = \'" + sItem + "\'", "region DESC, created DESC");
 
                 Hashtable htRegions = new Hashtable();
                 MarketLog ml;
 
                 foreach (DataRow dr in drFoundRows)
                 {
-                    ml = DataHandler.DataRowToMarketLog( dr );
+                    ml = DataHandler.DataRowToMarketLog(dr);
 
                     // If optional date filter is set in options, then filter logs
                     /*if (Values.IsLogsDateFilterSet && ml.Created <= Values.LogsDateFilter)
@@ -394,17 +561,17 @@ namespace MarketScanner
                     }*/
 
                     // make list for item selection combobox
-                    if (!htRegions.Contains( ml.RegionHash )) // if key exists
+                    if (!htRegions.Contains(ml.RegionHash)) // if key exists
                     {
-                        htRegions.Add( ml.RegionHash, ml );
+                        htRegions.Add(ml.RegionHash, ml);
                     }
                     else
                     { // compare dates of marketlog and replace if newer
                         MarketLog oldItem = (MarketLog)htRegions[ml.RegionHash];
                         if (oldItem.Created < ml.Created)
                         {
-                            htRegions.Remove( ml.RegionHash );
-                            htRegions.Add( ml.RegionHash, ml );
+                            htRegions.Remove(ml.RegionHash);
+                            htRegions.Add(ml.RegionHash, ml);
                         }
                     }
                 }
@@ -413,7 +580,7 @@ namespace MarketScanner
                 ArrayList alRegionsForCurrentItem = new ArrayList();
                 MarketLog mlFirstInlistMessage = new MarketLog();
                 mlFirstInlistMessage.Region = "!!!";
-                alRegionsForCurrentItem.Insert( 0, mlFirstInlistMessage );
+                alRegionsForCurrentItem.Insert(0, mlFirstInlistMessage);
 
                 // Convert to arraylist for sorting
                 foreach (MarketLog mlr in htRegions.Values)
@@ -421,11 +588,11 @@ namespace MarketScanner
                     // If optional date filter is set in options, then filter logs
                     if (Values.IsLogsDateFilterSet && mlr.Created <= Values.LogsDateFilter) continue;
 
-                    alRegionsForCurrentItem.Add( mlr );
+                    alRegionsForCurrentItem.Add(mlr);
                 }
 
-                MarketLogComparer compareOn = new MarketLogComparer( MarketLogCompareField.Region );
-                alRegionsForCurrentItem.Sort( compareOn );
+                MarketLogComparer compareOn = new MarketLogComparer(MarketLogCompareField.Region);
+                alRegionsForCurrentItem.Sort(compareOn);
                 mlFirstInlistMessage.Region = Values.MSG_SELECT_REGION;
 
                 ArrayList alRegionsForCurrentItemClone = (ArrayList)alRegionsForCurrentItem.Clone();
@@ -450,13 +617,13 @@ namespace MarketScanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void cbItems_SelectedIndexChanged( object sender, EventArgs e )
+        private void cbItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cbWithItems = (ComboBox)sender;
 
-            if (MarketItemSelected( (MarketLog)cbWithItems.SelectedItem, cbWithItems.SelectedIndex != 0 ))
+            if (MarketItemSelected((MarketLog)cbWithItems.SelectedItem, cbWithItems.SelectedIndex != 0))
             {
-                ItemTreeView.SelectByTag( cbWithItems.SelectedItem );
+                ItemTreeView.SelectByTag(cbWithItems.SelectedItem);
             }
         }
 
@@ -470,18 +637,26 @@ namespace MarketScanner
         {
             bool wasAnyRegionsRefreshed = false;
             // Refresh each column
-            for (int i = 0 ; i < ColumnCount ; i++)
+            for (int i = 0; i < ColumnCount; i++)
             {
                 // Is the bargainfinder set for this column?
                 if (_abbtSelectedType[i] > 0)
                 {
-                    FindBargain( _abbtSelectedType[i], ref _aRegionComboboxes[i] );
+                    FindBargain(_abbtSelectedType[i], ref _aRegionComboboxes[i]);
                 }
                 // check to see if a region was already selected and then reselect it (Also needed when min sec or quantity filters are changed)
                 if (_aiRegionSelectedHash[i] != 0)
                 {
-                    ReselectRegion( _aRegionComboboxes[i], _aiRegionSelectedHash[i], i );
+                    ReselectRegion(_aRegionComboboxes[i], _aiRegionSelectedHash[i], i);
                     wasAnyRegionsRefreshed = true;
+                }
+                else //select first region for the leftmost column
+                {
+                    if (i == 0 && cbRegionsL.Items.Count > 0)
+                    {
+                        cbRegionsL.SelectedIndex = 1;
+                        wasAnyRegionsRefreshed = true;
+                    }
                 }
             }
             return wasAnyRegionsRefreshed;
@@ -493,10 +668,10 @@ namespace MarketScanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RegionCombosManuallySelected( object sender, EventArgs e )
+        private void RegionCombosManuallySelected(object sender, EventArgs e)
         {
             ComboBox cbCurrent = (ComboBox)sender;
-            if (cbCurrent.Name.IndexOf( 'L' ) != -1)
+            if (cbCurrent.Name.IndexOf('L') != -1)
                 cbBargainTypeL.SelectedIndex = 0;
             else
                 cbBargainTypeR.SelectedIndex = 0;
@@ -508,9 +683,9 @@ namespace MarketScanner
         /// <param name="cb">The region combobox</param>
         /// <param name="iSelectedHash">The hash of the previously selected region</param>
         /// <param name="iColumn">The column to reselect to</param>
-        private void ReselectRegion( ComboBox cb, int iSelectedHash, int iColumn )
+        private void ReselectRegion(ComboBox cb, int iSelectedHash, int iColumn)
         {
-            for (int i = 0 ; i < cb.Items.Count ; i++)
+            for (int i = 0; i < cb.Items.Count; i++)
             {
                 MarketLog ml = (MarketLog)cb.Items[i];
                 if (iSelectedHash == ml.RegionHash)
@@ -518,10 +693,10 @@ namespace MarketScanner
                     switch (iColumn)
                     {
                         case 0:
-                            ml.ToGridView( ref dgvSellersL, ref dgvBuyersL, ref  _cmsSellersL, ref  _cmsBuyersL );
+                            ml.ToGridView(ref dgvSellersL, ref dgvBuyersL, ref  _cmsSellersL, ref  _cmsBuyersL);
                             break;
                         case 1:
-                            ml.ToGridView( ref dgvSellersR, ref dgvBuyersR, ref  _cmsSellersR, ref  _cmsBuyersR );
+                            ml.ToGridView(ref dgvSellersR, ref dgvBuyersR, ref  _cmsSellersR, ref  _cmsBuyersR);
                             break;
                         default:
                             break;
@@ -539,7 +714,7 @@ namespace MarketScanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void cbRegionsL_SelectedIndexChanged( object sender, EventArgs e )
+        private void cbRegionsL_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cbLeft = (ComboBox)sender;
             if (cbLeft.SelectedIndex == 0)
@@ -560,7 +735,7 @@ namespace MarketScanner
             _aiRegionSelectedHash[0] = ml.RegionHash;
 
             // Load log to gridviews
-            ml.ToGridView( ref dgvSellersL, ref dgvBuyersL, ref  _cmsSellersL, ref  _cmsBuyersL );
+            ml.ToGridView(ref dgvSellersL, ref dgvBuyersL, ref  _cmsSellersL, ref  _cmsBuyersL);
 
             // Show date created
             lblDateExportedL.Visible = lblDateExportedTextL.Visible = true;
@@ -568,7 +743,7 @@ namespace MarketScanner
         }
 
 
-        private void cbRegionsR_SelectedIndexChanged( object sender, EventArgs e )
+        private void cbRegionsR_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cbRight = (ComboBox)sender;
             if (cbRight.SelectedIndex == 0)
@@ -589,7 +764,7 @@ namespace MarketScanner
             _aiRegionSelectedHash[1] = ml.RegionHash;
 
             // Load log to gridviews
-            ml.ToGridView( ref dgvSellersR, ref dgvBuyersR, ref  _cmsSellersR, ref  _cmsBuyersR );
+            ml.ToGridView(ref dgvSellersR, ref dgvBuyersR, ref  _cmsSellersR, ref  _cmsBuyersR);
 
             // Show date created
             lblDateExportedR.Visible = lblDateExportedTextR.Visible = true;
@@ -597,68 +772,61 @@ namespace MarketScanner
         }
 
 
-
-        private void tsbLoadLogs_Click( object sender, EventArgs e )
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadMarketLogs();
-        }
-
-
-        private void exitToolStripMenuItem_Click( object sender, EventArgs e )
-        {
-            DialogResult dr = MessageBox.Show( "Exit " + Values.APP_TITLE + "?", "Exit application", MessageBoxButtons.OKCancel );
+            /*DialogResult dr = MessageBox.Show( "Exit " + Values.APP_TITLE + "?", "Exit application", MessageBoxButtons.OKCancel );
             if (dr == DialogResult.OK)
-            {
-                this.Close();
-                this.Dispose();
-            }
+            {*/
+            this.Close();
+            this.Dispose();
+            //}
         }
 
 
-        private void optionsToolStripMenuItem_Click( object sender, EventArgs e )
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FrmOptions frmOptions = new FrmOptions();
-            frmOptions.Show( this );
+            frmOptions.Show(this);
         }
 
 
-        private void aboutToolStripMenuItem_Click_1( object sender, EventArgs e )
+        private void aboutToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             AboutBox ab = new AboutBox();
-            ab.Show( this );
+            ab.Show(this);
         }
 
 
 
-        void tbMinQuantity_GotFocus( object sender, EventArgs e )
+        void tbMinQuantity_GotFocus(object sender, EventArgs e)
         {
             TextBox tb = (TextBox)sender;
             tb.Text = _iMinQuantityFilter.ToString();
         }
 
 
-        void tbMinQuantity_LostFocus( object sender, EventArgs e )
+        void tbMinQuantity_LostFocus(object sender, EventArgs e)
         {
             TextBox tb = (TextBox)sender;
 
             string sMinQuantity = tb.Text;
             long iQuantity;
-            Int64.TryParse( sMinQuantity, NumberStyles.Any, _ci, out iQuantity );
+            Int64.TryParse(sMinQuantity, NumberStyles.Any, _ci, out iQuantity);
 
             if (iQuantity == _iMinQuantityFilter) return;
             Values.MinMarketQuantity = _iMinQuantityFilter = iQuantity; // Remember the last entered value
             //tb.Text = string.Format(_ci, "{0:#,0}", iQuantity); Requires boxing
-            tb.Text = iQuantity.ToString( "#,0", _ci ); // Boxing free :)
+            tb.Text = iQuantity.ToString("#,0", _ci); // Boxing free :)
             RefreshRegions();
         }
 
-        private void textBox_KeyPress( object sender, KeyPressEventArgs e )
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == '\r') // handle enter key as a tab but keep focus
             {
                 e.Handled = true;
 
-                tbMinQuantity_LostFocus( sender, e );
+                tbMinQuantity_LostFocus(sender, e);
                 tbMinQuantity.SelectAll();
                 //System.Windows.Forms.SendKeys.Send("{TAB}");
                 // For Shift+tab:
@@ -668,7 +836,7 @@ namespace MarketScanner
 
 
         // On form resize
-        void Main_Resize( object sender, EventArgs e )
+        void Main_Resize(object sender, EventArgs e)
         {
             RepositionRegionComboboxes();
         }
@@ -682,7 +850,7 @@ namespace MarketScanner
             return;
         }
 
-        private void splitContainerMain_SplitterMoved( object sender, SplitterEventArgs e )
+        private void splitContainerMain_SplitterMoved(object sender, SplitterEventArgs e)
         {
             ResizeSplitterDependents();
             RepositionRegionComboboxes();
@@ -702,7 +870,7 @@ namespace MarketScanner
         /// </summary>
         /// <param name="bbtType">The type of bargain selected by user.</param>
         /// <param name="cbRegions">The originating ComboBox.</param>
-        private static void FindBargain( BestBargainTypes bbtType, ref ComboBox cbRegions )
+        private static void FindBargain(BestBargainTypes bbtType, ref ComboBox cbRegions)
         {
             int iCbIndex = 0;
             int iBargainIndex = 0;
@@ -719,52 +887,52 @@ namespace MarketScanner
                 // increment the index
                 iCbIndex++;
                 // add the High or Low value to dictionary
-                dicPrices.Add( new KeyValuePair<int, double>( iCbIndex, ml.GetHighLowByBargainType( bbtType ) ) );
+                dicPrices.Add(new KeyValuePair<int, double>(iCbIndex, ml.GetHighLowByBargainType(bbtType)));
             }
 
             // Sortings
             switch (bbtType)
             {
                 case BestBargainTypes.HighestBuy:
-                    dicPrices.Sort( ( firstPair, nextPair ) => nextPair.Value.CompareTo( firstPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => nextPair.Value.CompareTo(firstPair.Value));
                     iBargainIndex = dicPrices[0].Key;
                     break;
                 case BestBargainTypes.SecondHighestBuy:
-                    dicPrices.Sort( ( firstPair, nextPair ) => nextPair.Value.CompareTo( firstPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => nextPair.Value.CompareTo(firstPair.Value));
                     // second high/low price in different region
-                    iBargainIndex = Utility.findSecondRegion( dicPrices );
+                    iBargainIndex = Utility.findSecondRegion(dicPrices);
                     break;
                 // The lowest region of all the highest bidders
                 // (Where to place your Buy orders)
                 case BestBargainTypes.HighestBidderLowestRegion:
-                    dicPrices.Sort( ( firstPair, nextPair ) => firstPair.Value.CompareTo( nextPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
                     iBargainIndex = dicPrices[0].Key;
                     break;
                 case BestBargainTypes.SecondHighestBidderLowestRegion:
-                    dicPrices.Sort( ( firstPair, nextPair ) => firstPair.Value.CompareTo( nextPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
                     // second high/low price in different region
-                    iBargainIndex = Utility.findSecondRegion( dicPrices );
+                    iBargainIndex = Utility.findSecondRegion(dicPrices);
                     break;
                 //-----------------------------------------------
                 case BestBargainTypes.LowestSell:
-                    dicPrices.Sort( ( firstPair, nextPair ) => firstPair.Value.CompareTo( nextPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
                     iBargainIndex = dicPrices[0].Key;
                     break;
                 case BestBargainTypes.SecondLowestSell:
-                    dicPrices.Sort( ( firstPair, nextPair ) => firstPair.Value.CompareTo( nextPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => firstPair.Value.CompareTo(nextPair.Value));
                     // second high/low price in different region
-                    iBargainIndex = Utility.findSecondRegion( dicPrices );
+                    iBargainIndex = Utility.findSecondRegion(dicPrices);
                     break;
                 // The Highest region of the lowest sellers
                 //(Where to place you Sell orders)
                 case BestBargainTypes.LowestSellerHighestRegion:
-                    dicPrices.Sort( ( firstPair, nextPair ) => nextPair.Value.CompareTo( firstPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => nextPair.Value.CompareTo(firstPair.Value));
                     iBargainIndex = dicPrices[0].Key;
                     break;
                 case BestBargainTypes.SecondLowestSellerHighestRegion:
-                    dicPrices.Sort( ( firstPair, nextPair ) => nextPair.Value.CompareTo( firstPair.Value ) );
+                    dicPrices.Sort((firstPair, nextPair) => nextPair.Value.CompareTo(firstPair.Value));
                     // second high/low price in different region
-                    iBargainIndex = Utility.findSecondRegion( dicPrices );
+                    iBargainIndex = Utility.findSecondRegion(dicPrices);
                     break;
             }
 
@@ -773,19 +941,19 @@ namespace MarketScanner
         }
 
 
-        private void cbBargainTypeL_SelectedIndexChanged( object sender, EventArgs e )
+        private void cbBargainTypeL_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
             BestBargainTypes selectedBargainType = (BestBargainTypes)cb.SelectedIndex;
-            FindBargain( selectedBargainType, ref cbRegionsL );
+            FindBargain(selectedBargainType, ref cbRegionsL);
             _abbtSelectedType[0] = selectedBargainType;
         }
 
-        private void cbBargainTypeR_SelectedIndexChanged( object sender, EventArgs e )
+        private void cbBargainTypeR_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
             BestBargainTypes selectedBargainType = (BestBargainTypes)cb.SelectedIndex;
-            FindBargain( selectedBargainType, ref cbRegionsR );
+            FindBargain(selectedBargainType, ref cbRegionsR);
             _abbtSelectedType[1] = selectedBargainType;
         }
 
@@ -795,7 +963,7 @@ namespace MarketScanner
             cbBargainTypeR.SelectedIndex = 0;
         }
 
-        private bool EnableBargainCombos( bool isEnabled )
+        private bool EnableBargainCombos(bool isEnabled)
         {
             cbBargainTypeL.Enabled = isEnabled;
             cbBargainTypeR.Enabled = isEnabled;
@@ -813,7 +981,7 @@ namespace MarketScanner
         /// </summary>
         private void DoBargainComboFill()
         {
-            EnableBargainCombos( false ); // init 
+            EnableBargainCombos(false); // init 
             string[] sarrBargainType = new string[9] { "Find where to...", "Buy", "Buy (2nd)", "Sell", "Sell (2nd)", "Place buy order", "Place buy order (2nd)", "Place sell order", "Place sell order (2nd)" };//, "*Lowest Buy", "*Highest Sell" };
             cbBargainTypeL.DataSource = sarrBargainType.Clone();
             cbBargainTypeR.DataSource = sarrBargainType;
@@ -832,7 +1000,7 @@ namespace MarketScanner
             // Make sure an index is selected
             if (Values.MinSystemSecurity != 0)
             {
-                for (int i = 0 ; i < darrSysSec.Length ; i++)
+                for (int i = 0; i < darrSysSec.Length; i++)
                 {
                     // Reselect previous value
                     if (darrSysSec[i] != Values.MinSystemSecurity) continue;
@@ -848,14 +1016,14 @@ namespace MarketScanner
             cbMinSysSec.FormatString = "F1";
             cbMinSysSec.FormattingEnabled = true;
             // Reenable the event handler
-            cbMinSysSec.SelectedIndexChanged += new EventHandler( cbMinSysSec_SelectedIndexChanged );
+            cbMinSysSec.SelectedIndexChanged += new EventHandler(cbMinSysSec_SelectedIndexChanged);
         }
 
-        private void cbMinSysSec_SelectedIndexChanged( object sender, EventArgs e )
+        private void cbMinSysSec_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
             double dParseResult;
-            double.TryParse( cb.SelectedValue.ToString(), out dParseResult );
+            double.TryParse(cb.SelectedValue.ToString(), out dParseResult);
             if (dParseResult != Values.MinSystemSecurity)
             {
                 // If the value is changed. Set new value and resfresh the regions
@@ -864,7 +1032,7 @@ namespace MarketScanner
             }
         }
 
-        private void tsbToggleItemBrowser_Click( object sender, EventArgs e )
+        private void tsbToggleItemBrowser_Click(object sender, EventArgs e)
         {
             Values.IsMarketBrowserClosed = splitContainerMain.Panel1Collapsed = !splitContainerMain.Panel1Collapsed;
             // update region comboboxes position
@@ -875,18 +1043,18 @@ namespace MarketScanner
             }
         }
 
-        private void ItemTreeView_AfterSelect( object sender, TreeViewEventArgs e )
+        private void ItemTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            SelectItemTreeItem( ItemTreeView.SelectedNode.Tag );
+            SelectItemTreeItem(ItemTreeView.SelectedNode.Tag);
         }
 
         /// <summary>
         /// Select the item defined by mlMarketLog without causing a cbItems.SelectedIndexChanged event
         /// </summary>
         /// <param name="mlMarketLog">A marketlog</param>
-        private void SelectItemTreeItem( object mlMarketLog )
+        private void SelectItemTreeItem(object mlMarketLog)
         {
-            if (!MarketItemSelected( (MarketLog)mlMarketLog, mlMarketLog != null )) return;
+            if (!MarketItemSelected((MarketLog)mlMarketLog, mlMarketLog != null)) return;
             cbItems.SelectedIndexChanged -= cbItems_SelectedIndexChanged;
             cbItems.SelectedItem = mlMarketLog;
             cbItems.SelectedIndexChanged += cbItems_SelectedIndexChanged;
@@ -903,7 +1071,7 @@ namespace MarketScanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Main_Load( object sender, EventArgs e )
+        private void Main_Load(object sender, EventArgs e)
         {
             if (MarketScanner.Properties.Settings.Default.MySettingsUpgradeToNewVersion)
             {
@@ -919,10 +1087,31 @@ namespace MarketScanner
 
             // Do local initialization
             LocalInit();
+
+            if (Values.UseCacheReader)
+            {
+                loadMarketLogsFromCacheToolStripMenuItem.Checked = true;
+            }
+            else
+            {
+                loadExportedMarketLogsToolStripMenuItem.Checked = true;
+            }
+
             // Last init
             if (Values.LoadLogsOnStartup)
             {
-                LoadMarketLogs();
+                if (Values.UseCacheReader)
+                {
+                    LoadMarketLogsFromCache();
+                    FSWatcherCache.EnableRaisingEvents = true;
+                    FSWatcherLogs.EnableRaisingEvents = false;
+                }
+                else
+                {
+                    LoadMarketLogs();
+                    FSWatcherLogs.EnableRaisingEvents = true;
+                    FSWatcherCache.EnableRaisingEvents = false;
+                }
             }
         }
 
@@ -931,7 +1120,7 @@ namespace MarketScanner
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Main_FormClosing( object sender, FormClosingEventArgs e )
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             MarketScanner.Properties.Settings.Default.MyWindowState = this.WindowState;
             if (this.WindowState == FormWindowState.Normal)
@@ -953,7 +1142,7 @@ namespace MarketScanner
 
         #region "New unstable functionallity"
 
-        private void toolStripButton1_Click( object sender, EventArgs e )
+        private void toolStripButton1_Click(object sender, EventArgs e)
         {
             Wallet w = new Wallet();
             w.Show();
@@ -961,21 +1150,58 @@ namespace MarketScanner
 
 
 
-        private void toolStrip1_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             //ItemTreeView.LoadTreeView( ref _htAvailLogItems );
         }
 
 
 
-        private void excludeSystemsToolStripMenuItem_Click( object sender, EventArgs e )
+        private void excludeSystemsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StarSystemsFilter starSystemsFilterWindow = new StarSystemsFilter();
-            starSystemsFilterWindow.Show( this );
+            starSystemsFilterWindow.Show(this);
         }
 
 
         #endregion
+
+
+        private void loadMarketLogsFromCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (loadMarketLogsFromCacheToolStripMenuItem.Checked == false)
+            {
+                loadExportedMarketLogsToolStripMenuItem.Checked = false;
+                loadMarketLogsFromCacheToolStripMenuItem.Checked = true;
+                Values.UseCacheReader = true;
+            }
+        }
+
+        private void loadExportedMarketLogsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (loadExportedMarketLogsToolStripMenuItem.Checked == false)
+            {
+                loadExportedMarketLogsToolStripMenuItem.Checked = true;
+                loadMarketLogsFromCacheToolStripMenuItem.Checked = false;
+                Values.UseCacheReader = false;
+            }
+        }
+
+        private void tsbLoadLogs_ButtonClick(object sender, EventArgs e)
+        {
+            if (loadMarketLogsFromCacheToolStripMenuItem.Checked == true)
+            {
+                LoadMarketLogsFromCache();
+                FSWatcherCache.EnableRaisingEvents = true;
+                FSWatcherLogs.EnableRaisingEvents = false;
+            }
+            if (loadExportedMarketLogsToolStripMenuItem.Checked == true)
+            {
+                LoadMarketLogs();
+                FSWatcherCache.EnableRaisingEvents = false;
+                FSWatcherLogs.EnableRaisingEvents = true;
+            }
+        }
 
     }
 }

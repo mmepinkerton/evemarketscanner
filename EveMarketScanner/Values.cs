@@ -5,6 +5,10 @@ using System.IO;
 using System.Security;
 using System.Collections;
 using System.Data;
+using System.Globalization;
+using System.Xml;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using MarketScanner.EveApi;
 
@@ -49,7 +53,7 @@ namespace MarketScanner
         public const string APP_RESOURCE_STATIONS_XML = @"\resources\Stations.xml.gz";
         public const string APP_RESOURCE_REGIONS_XML = @"\resources\Regions.xml.gz";
         public const string APP_RESOURCE_SOLARSYSTEMS_XML = @"\resources\SolarSystems.xml.gz";
-        public const string APP_RESOURCE_ITEMS_XML = @"\resources\MarketItems.xml.gz";
+        public const string APP_RESOURCE_ITEMS_XML = @"\resources\eve-items-en-US.xml.gz";
         public const string ORDER_DATE_EXPIRED = "Market order expired!";
         public const string MSG_ERROR = "An error has occcured";
         public const string MSG_SELECT_REGION = "Select a region...";
@@ -106,7 +110,9 @@ Place sell order: The region with highest sell price of all regions lowest sell 
         public static Dictionary<int, string> slSolarSystems = new Dictionary<int, string>();
         public static Dictionary<int, double> dSystemSecurity = new Dictionary<int, double>();
         private static bool b = DataHandler.GetSolarSystemsInfo( dtSystemSecurity, ref slSolarSystems, ref dSystemSecurity ); // b is just an unused variable, but needed to invoke a function in a static context, it seems...
-
+        //Item names
+        public static XmlDocument domItemNames = DataHandler.FromCompressedXmlFile(Values.sAppPath + Values.APP_RESOURCE_ITEMS_XML);
+        public static Dictionary<int, string> dItemNames = DataHandler.GetItemNames(domItemNames);
 
 
         #region Properties.Settings
@@ -124,6 +130,26 @@ Place sell order: The region with highest sell price of all regions lowest sell 
             set
             {
                 Properties.Settings.Default.MyMarketLogPath = value;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        internal static string CachedMethodCallsPath
+        {
+            get
+            {
+                return FindCachePath();
+            }
+            set {
+            }
+        }
+
+        internal static bool UseCacheReader
+        {
+            get { return Properties.Settings.Default.MyUseCacheReader; }
+            set
+            {
+                Properties.Settings.Default.MyUseCacheReader = value;
                 Properties.Settings.Default.Save();
             }
         }
@@ -300,5 +326,53 @@ Place sell order: The region with highest sell price of all regions lowest sell 
             }
             return false;
         }
+
+        private static string FindCachePath(string folderPath = null)
+        {
+            List<string> s_includedFolders = new List<string>();
+            string EVESettingsPath = @"CCP\EVE";
+            string CacheFolderPath = @"cache\MachoNet\87.237.38.200";
+            string ServerLookupName = "*_tranquility";
+            string DefaultFolderLookupName = "CachedMethodCalls";
+
+            // Construct the path to the EVE cache folder
+            string eveApplicationDataDir = String.IsNullOrWhiteSpace(folderPath)
+                                               ? Path.Combine(
+                                                   Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                                   EVESettingsPath)
+                                               : folderPath;
+
+            // Quit if folder not found
+            if (!Directory.Exists(eveApplicationDataDir))
+                return ""; //new FileInfo[] { };
+
+            // Find all eve clients data folders
+            DirectoryInfo directory = new DirectoryInfo(eveApplicationDataDir);
+            DirectoryInfo[] foldersIn = directory.GetDirectories(ServerLookupName).OrderBy(dir => dir.CreationTimeUtc).ToArray();
+
+            // Get the path to the cache folder of each eve client
+            IEnumerable<string> cacheFoldersPath =
+                !foldersIn.Any()
+                    ? new List<string> { Path.Combine(eveApplicationDataDir, CacheFolderPath) }
+                    : foldersIn.Select(folder => folder.Name).Select(
+                        folder => Path.Combine(eveApplicationDataDir, folder, CacheFolderPath));
+
+            // Get the latest cache folder (differs on every client patch version)
+            // We take into consideration the edge case where the user has multiple clients but uses only one
+            string latestFolder = cacheFoldersPath.Select(x => new DirectoryInfo(x)).Where(x => x.Exists).SelectMany(
+                x => x.GetDirectories()).Select(
+                    x => int.Parse(x.Name, CultureInfo.InvariantCulture)).Concat(new[] { 0 }).Max().ToString(
+                        CultureInfo.InvariantCulture);
+
+            // Construct the final path to the cache folders
+            cacheFoldersPath = s_includedFolders.Any()
+                                   ? cacheFoldersPath.SelectMany(
+                                       path => s_includedFolders,
+                                       (path, folder) => Path.Combine(path, latestFolder, folder)).ToList()
+                                   : cacheFoldersPath.Select(path => Path.Combine(path, latestFolder, DefaultFolderLookupName));
+            return cacheFoldersPath.First();
+        }
     }
+
+    
 }

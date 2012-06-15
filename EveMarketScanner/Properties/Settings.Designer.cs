@@ -94,6 +94,21 @@ namespace MarketScanner.Properties {
                 this["MyLoadLogsOnStartup"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MyUseCacheReader
+        {
+            get
+            {
+                return ((bool)(this["MyUseCacheReader"]));
+            }
+            set
+            {
+                this["MyUseCacheReader"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

@@ -69,12 +69,12 @@ namespace MarketScanner
 
                 //debug int count1 = dt.Rows.Count;
 
-                DataRow[] aDr = dt.Select( string.Format( "volRemaining >= {0} AND Security >= '{1}'", Values.MinMarketQuantity, Values.MinSystemSecurity ) );
+                DataRow[] aDr = dt.Select(string.Format("volRemaining >= {0} AND Security >= '{1}'", Values.MinMarketQuantity, Values.MinSystemSecurity));
 
                 //debug int count2 = aDr.Length;
-                for (int i = 0 ; i < aDr.Length ; i++)
+                for (int i = 0; i < aDr.Length; i++)
                 {
-                    dtfiltered.ImportRow( aDr[i] );
+                    dtfiltered.ImportRow(aDr[i]);
                 }
 
                 //debug int count3 = dtfiltered.Rows.Count;
@@ -84,22 +84,22 @@ namespace MarketScanner
 
         public double HighestBuy
         {
-            get { return GetExtremePrice( "MAX", true ); }
+            get { return GetExtremePrice("MAX", true); }
         }
 
         public double LowestBuy
         {
-            get { return GetExtremePrice( "MIN", true ); }
+            get { return GetExtremePrice("MIN", true); }
         }
 
         public double HighestSell
         {
-            get { return GetExtremePrice( "MAX", false ); }
+            get { return GetExtremePrice("MAX", false); }
         }
 
         public double LowestSell
         {
-            get { return GetExtremePrice( "MIN", false ); }
+            get { return GetExtremePrice("MIN", false); }
         }
 
         private DataView _dvSellers;
@@ -131,12 +131,22 @@ namespace MarketScanner
         private DataTable ToDataTable()
         {
             DataTable dtLog = null;
-            if (File.Exists( this.FilePath )) //Check if file still exists
+            if (File.Exists(this.FilePath)) //Check if file still exists
             {
-                FileStream fs = new FileStream( this.FilePath, FileMode.Open );
                 DataHandler dh = new DataHandler();
-                dtLog = dh.ProcessMarketLog( fs, FileDataTypes.Csv, Values.dtMarketLogsListTable.TableName, ref Values.slStationNames );
-                fs.Close();
+                switch (Path.GetExtension(this.FilePath))
+                {
+                    case ".txt":
+                        FileStream fs = new FileStream(this.FilePath, FileMode.Open);
+
+                        dtLog = dh.ProcessMarketLog(fs, FileDataTypes.Csv, Values.dtMarketLogsListTable.TableName, ref Values.slStationNames);
+                        fs.Close();
+                        break;
+                    case ".cache":
+                        dtLog = dh.ProcessCachedMarketLog(this.FilePath, Values.dtMarketLogsListTable.TableName, ref Values.slStationNames);
+                        break;
+                }
+
             }
             return dtLog;
         }
@@ -148,20 +158,20 @@ namespace MarketScanner
         /// <param name="dgvBuyers"></param>
         /// <param name="cmsMainSellers"></param>
         /// <param name="cmsMainBuyers"></param>
-        internal void ToGridView( ref MarketScanner.Common.BgPaintedDataGridView dgvSellers, ref MarketScanner.Common.BgPaintedDataGridView dgvBuyers, ref ContextMenuStrip cmsMainSellers, ref ContextMenuStrip cmsMainBuyers )
+        internal void ToGridView(ref MarketScanner.Common.BgPaintedDataGridView dgvSellers, ref MarketScanner.Common.BgPaintedDataGridView dgvBuyers, ref ContextMenuStrip cmsMainSellers, ref ContextMenuStrip cmsMainBuyers)
         {
             dgvSellers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dgvSellers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
 
             dgvSellers.SuspendLayout();
             dgvBuyers.SuspendLayout();
-            if (File.Exists( this.FilePath )) //Check if file still exists
+            if (File.Exists(this.FilePath)) //Check if file still exists
             {
                 DataTable dtLog = MarketTable; // Get filtered MarketLog datatable
                 if (dtLog != null)
                 {
                     // Split between buyers and sellers
-                    DataHandler.SplitLogEntries( ref dtLog, ref _dvSellers, ref _dvBuyers );
+                    DataHandler.SplitLogEntries(ref dtLog, ref _dvSellers, ref _dvBuyers);
 
                     // modify view settings
                     _dvSellers.AllowNew = _dvBuyers.AllowNew = false;
@@ -171,12 +181,12 @@ namespace MarketScanner
                     // Set datasource before formatting
                     dgvSellers.DataSource = _dvSellers;
                     dgvBuyers.DataSource = _dvBuyers;
-                    Formatting.FormatDataGridViewByType( ref dgvSellers, FormatDgvType.Sellers );
-                    Formatting.FormatDataGridViewByType( ref dgvBuyers, FormatDgvType.Buyers );
+                    Formatting.FormatDataGridViewByType(ref dgvSellers, FormatDgvType.Sellers);
+                    Formatting.FormatDataGridViewByType(ref dgvBuyers, FormatDgvType.Buyers);
 
                     // Set Context menus
-                    GetContextMenuForDataGridView( ref dgvBuyers, ref cmsMainBuyers );
-                    GetContextMenuForDataGridView( ref dgvSellers, ref cmsMainSellers );
+                    GetContextMenuForDataGridView(ref dgvBuyers, ref cmsMainBuyers);
+                    GetContextMenuForDataGridView(ref dgvSellers, ref cmsMainSellers);
                 }
             }
             dgvSellers.ResumeLayout();
@@ -188,7 +198,7 @@ namespace MarketScanner
         /// </summary>
         /// <param name="bbt">BestBargainTypes</param>
         /// <returns>Proper property value</returns>
-        internal double GetHighLowByBargainType( BestBargainTypes bbt )
+        internal double GetHighLowByBargainType(BestBargainTypes bbt)
         {
             switch (bbt)
             {
@@ -217,22 +227,22 @@ namespace MarketScanner
         /// <param name="sFunction">MIN/MAX</param>
         /// <param name="bid">true/false (i.e. buyer or seller, respectively)</param>
         /// <returns>0.0 or the extreme price</returns>
-        internal double GetExtremePrice( string sFunction, bool bid )
+        internal double GetExtremePrice(string sFunction, bool bid)
         {
             double dExtreme = 0;
-            Object obj = this.MarketTable.Compute( sFunction + "(price)", string.Format( "bid = {0}", bid ) );
+            Object obj = this.MarketTable.Compute(sFunction + "(price)", string.Format("bid = {0}", bid));
             if (!(obj is DBNull))
             {
-                dExtreme = Convert.ToDouble( obj );
+                dExtreme = Convert.ToDouble(obj);
             }
             return dExtreme;
         }
 
         #region Context menu for a DataGridView
 
-        private void GetContextMenuForDataGridView( ref MarketScanner.Common.BgPaintedDataGridView dgv, ref ContextMenuStrip cms )
+        private void GetContextMenuForDataGridView(ref MarketScanner.Common.BgPaintedDataGridView dgv, ref ContextMenuStrip cms)
         {
-            for (int i = 0 ; i < dgv.ColumnCount ; i++)
+            for (int i = 0; i < dgv.ColumnCount; i++)
             {
                 if (cms.Items.Count == dgv.ColumnCount)// Only add menuitems if not already there
                 {
@@ -247,17 +257,17 @@ namespace MarketScanner
                     tsMenuItem.Name = dgv.Columns[i].Name;
                     tsMenuItem.Checked = dgv.Columns[i].Visible;
                     tsMenuItem.CheckOnClick = true;
-                    cms.Items.Add( tsMenuItem );
+                    cms.Items.Add(tsMenuItem);
                 }
                 // set the contextmenu for each column header.
                 dgv.Columns[i].HeaderCell.ContextMenuStrip = cms;
             }
             // Set click event for the toolstripitems
-            cms.ItemClicked += new ToolStripItemClickedEventHandler( cms_ItemClicked );
+            cms.ItemClicked += new ToolStripItemClickedEventHandler(cms_ItemClicked);
         }
 
 
-        private static void cms_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
+        private static void cms_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             ToolStripMenuItem tsMenuItem = (ToolStripMenuItem)e.ClickedItem;
             ContextMenuStrip cms = (ContextMenuStrip)sender;
@@ -315,7 +325,7 @@ namespace MarketScanner
             //default constructor
         }
 
-        public MarketLogComparer( MarketLogCompareField pSortBy )
+        public MarketLogComparer(MarketLogCompareField pSortBy)
         {
             _sortBy = pSortBy;
         }
@@ -323,20 +333,20 @@ namespace MarketScanner
         #endregion
 
         #region Methods
-        public Int32 Compare( Object pFirstObject, Object pObjectToCompare )
+        public Int32 Compare(Object pFirstObject, Object pObjectToCompare)
         {
             if (pFirstObject is MarketLog)
             {
                 switch (this._sortBy)
                 {
                     case MarketLogCompareField.Item:
-                        return String.Compare( ((MarketLog)pFirstObject).Item, ((MarketLog)pObjectToCompare).Item );
+                        return String.Compare(((MarketLog)pFirstObject).Item, ((MarketLog)pObjectToCompare).Item);
                     //break;
                     case MarketLogCompareField.Region:
-                        return String.Compare( ((MarketLog)pFirstObject).Region, ((MarketLog)pObjectToCompare).Region );
+                        return String.Compare(((MarketLog)pFirstObject).Region, ((MarketLog)pObjectToCompare).Region);
                     //break;
                     case MarketLogCompareField.Created:
-                        return DateTime.Compare( ((MarketLog)pFirstObject).Created, ((MarketLog)pObjectToCompare).Created );
+                        return DateTime.Compare(((MarketLog)pFirstObject).Created, ((MarketLog)pObjectToCompare).Created);
                     //break;
                     default:
                         return 0;

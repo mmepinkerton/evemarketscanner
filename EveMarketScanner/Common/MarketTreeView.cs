@@ -19,24 +19,24 @@ namespace MarketScanner.Common
             this.ItemDrag += MarketTreeViewItemDrag;
         }
 
-        void MarketTreeViewItemDrag( object sender, ItemDragEventArgs e )
+        void MarketTreeViewItemDrag(object sender, ItemDragEventArgs e)
         {
 
             //TreeNode sourceNode = (TreeNode)e.Item;
-            
-            DoDragDrop( e.Item.ToString(), DragDropEffects.Move | DragDropEffects.Copy );
+
+            DoDragDrop(e.Item.ToString(), DragDropEffects.Move | DragDropEffects.Copy);
         }
 
 
-        private void DisplayXml( XmlNode xmldoc, TreeView tvw )
+        private void DisplayXml(XmlNode xmldoc, TreeView tvw)
         {
             // Add it to the TreeView Nodes collection
-            DisplayXmlNode( xmldoc, tvw.Nodes );
+            DisplayXmlNode(xmldoc, tvw.Nodes);
             // Expand the root node.
             //tvw.Nodes[0].Expand();
         }
 
-        private void DisplayXmlNode( XmlNode xmlnode, TreeNodeCollection nodes )
+        private void DisplayXmlNode(XmlNode xmlnode, TreeNodeCollection nodes)
         {
             // Add a TreeView node for this XmlNode.
             // (Using the node's Name is OK for most XmlNode types.)
@@ -45,47 +45,47 @@ namespace MarketScanner.Common
             switch (xmlnode.NodeType)
             {
                 case XmlNodeType.Element:
-                    if (xmlnode.Name == "ItemCategory")
+                    if (xmlnode.Name == "marketGroup")
                     {
-                        if (xmlnode.FirstChild.Name == "Name")
+                        if (xmlnode.Attributes["name"] != null)
                         {
-                            tvNode = nodes.Add( xmlnode.FirstChild.InnerText );
-                            Font font = new Font( "Arial", 8 );
+                            tvNode = nodes.Add(xmlnode.Attributes["name"].Value);
+                            Font font = new Font("Arial", 8);
                             tvNode.NodeFont = font;
                             //tvNode.Tag = "ItemCategory";
-                            if (xmlnode.LastChild.Name == "Subcategories")
-                            {
-                                xmlnode = xmlnode.LastChild;
-                            }
-                            if (xmlnode.LastChild.Name == "Items")
-                            {
-                                xmlnode = xmlnode.LastChild;
-                            }
                         }
                     }
-                    if (xmlnode.Name == "Item")
+                    if (xmlnode.Name == "marketGroups")
+                    {
+                    }
+                    if (xmlnode.Name == "item")
                     {
                         // Set leaf node name
-                        if (xmlnode.FirstChild.Name == "Name")
+                        if (xmlnode.Attributes["name"].Value != null)
                         {
                             if (DoHashMatch)
                             {
                                 // Get Item Hash
-                                string sItemName = xmlnode.FirstChild.InnerText;
+                                string sItemName = xmlnode.Attributes["name"].Value;
                                 int iHash = sItemName.GetHashCode();
-                                if (!_htAvailLogItems.Contains( iHash ))
+                                if (!_htAvailLogItems.Contains(iHash))
                                 {
-                                    tvNode = nodes.Add( xmlnode.FirstChild.InnerText ); // Add the node
-                                    Font font = new Font( "Arial", 8 );
+                                    if (!Values.ShowAllAvailableMarketItemsInTreeView)
+                                        break;
+                                    //we have to prune for the categories later, but at least we won't have to prune several thousand items
+
+                                    tvNode = nodes.Add(xmlnode.Attributes["name"].Value); // Add the node
+                                    Font font = new Font("Arial", 8);
                                     tvNode.NodeFont = font;
                                     tvNode.ForeColor = Color.Gray;
                                     //tvNode.Tag = "ItemGreyed";
+
                                 }
                                 else
                                 {
-                                    tvNode = nodes.Add( xmlnode.FirstChild.InnerText ); // Add the node
+                                    tvNode = nodes.Add(xmlnode.Attributes["name"].Value); // Add the node
                                     tvNode.ForeColor = Color.Black;
-                                    Font boldFont = new Font( "Arial", 8, FontStyle.Bold );
+                                    Font boldFont = new Font("Arial", 8, FontStyle.Bold);
                                     tvNode.NodeFont = boldFont;
                                     tvNode.EnsureVisible();
                                     tvNode.Tag = _htAvailLogItems[iHash]; // set treenode tag for later selection
@@ -108,6 +108,7 @@ namespace MarketScanner.Common
                 default:
                     break;
                 // ignore other node types.
+
             }
 
             // Only continue if any nodes were added.
@@ -118,9 +119,10 @@ namespace MarketScanner.Common
             XmlNode xmlChild = xmlnode.FirstChild;
             while (xmlChild != null)
             {
-                DisplayXmlNode( xmlChild, newNodes );
+                DisplayXmlNode(xmlChild, newNodes);
                 xmlChild = xmlChild.NextSibling;
             }
+
         }
 
 
@@ -129,14 +131,14 @@ namespace MarketScanner.Common
             this.Cursor = Cursors.WaitCursor;
 
             // Load the XML file.
-            XmlDocument dom = DataHandler.FromCompressedXmlFile( Values.sAppPath + Values.APP_RESOURCE_ITEMS_XML );
+            XmlDocument dom = DataHandler.FromCompressedXmlFile(Values.sAppPath + Values.APP_RESOURCE_ITEMS_XML);
 
             // Load the XML into the TreeView.
             this.Nodes.Clear();
 
             this.BeginUpdate();
 
-            DisplayXml( dom, this );
+            DisplayXml(dom, this);
             // Show all or only available, as per ShowAllAvailableMarketItemsInTreeView setting in options
             if (!Values.ShowAllAvailableMarketItemsInTreeView) PruneTreeView();
 
@@ -144,7 +146,7 @@ namespace MarketScanner.Common
             this.Cursor = Cursors.Default;
         }
 
-        public void LoadTreeView( ref Hashtable ht )
+        public void LoadTreeView(ref Hashtable ht)
         {
             _htAvailLogItems = ht;
             DoHashMatch = true;
@@ -154,32 +156,32 @@ namespace MarketScanner.Common
 
 
 
-        public void SelectByTag( object o )
+        public void SelectByTag(object o)
         {
             TreeNodeCollection nodes = this.Nodes;
             foreach (TreeNode n in nodes)
             {
-                FindRecursiveTag( n, o );
+                FindRecursiveTag(n, o);
             }
         }
 
 
 
-        private void FindRecursiveTag( TreeNode treeNode, object o )
+        private void FindRecursiveTag(TreeNode treeNode, object o)
         {
 
             foreach (TreeNode tn in treeNode.Nodes)
             {
                 // if the text properties match, color the item
-                if (tn.Tag != null && tn.Tag.Equals( o ))
+                if (tn.Tag != null && tn.Tag.Equals(o))
                 {
-                    SelectTreeNode( tn );
+                    SelectTreeNode(tn);
                 }
-                FindRecursiveTag( tn, o );
+                FindRecursiveTag(tn, o);
             }
         }
 
-        private void SelectTreeNode( TreeNode tnSelected )
+        private void SelectTreeNode(TreeNode tnSelected)
         {
 
             this.HideSelection = false;
@@ -193,30 +195,30 @@ namespace MarketScanner.Common
         {
             // prune each node recursively.
             // TODO: Do it in a bottom up fashion, so that the many recursions aren't necessary
-            for (int i = 0 ; i < _maxTreeDepth + 1 ; i++)
+            for (int i = 0; i < _maxTreeDepth + 1; i++)
             {
-                RemoveCheckedNodes( this.Nodes );
+                RemoveCheckedNodes(this.Nodes);
             }
         }
 
 
-        static void RemoveCheckedNodes( TreeNodeCollection nodes )
+        static void RemoveCheckedNodes(TreeNodeCollection nodes)
         {
             List<TreeNode> checkedNodes = new List<TreeNode>();
             foreach (TreeNode node in nodes)
             {
                 if (node.Tag == null && node.FirstNode == null)
                 {
-                    checkedNodes.Add( node );
+                    checkedNodes.Add(node);
                 }
                 else
                 {
-                    RemoveCheckedNodes( node.Nodes );
+                    RemoveCheckedNodes(node.Nodes);
                 }
             }
             foreach (TreeNode checkedNode in checkedNodes)
             {
-                nodes.Remove( checkedNode );
+                nodes.Remove(checkedNode);
             }
         }
 
