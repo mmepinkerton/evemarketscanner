@@ -1,0 +1,95 @@
+Changelog:
+v1.6.0
+- Fixed: Context menus (i.e. colums in grid) was incorrectly sharing the same variable. Reported by Circus Bob.
+- Fixed: Time zone error in expiry date, it was using local time, but is now strictly Eve time. Reported by Circus Bob.
+- Conversion: Based on the .NET 4.0 framework now. Remember to upgrade. http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9cfb2d51-5ff4-4491-b0e5-b386f32c0992
+v1.5.9
+- Fixed: Path monitoring not working when changing marketlogs path.
+- Update: Incursion 1.1.0 data incorporated.
+v1.5.8
+- Update: Tyrannis 1.0.1 data incorporated.
+v1.5.7
+- Added: "Second best region" in bargain finder.
+- Added: Ignore expired orders in options.
+- Change: Various optimizations.
+v1.5.6
+- Change: Icons redesigned.
+- Improvement: Smaller setup file size.
+v1.5.5
+- Update: Dominion 1.1.1 data incorporated.
+- Added: Icon to Add/Remove list.
+v1.5.4
+- Added: General error logging. Logs are written to "%APPDATA%\Eve Market Scanner" directory.
+v1.5.3
+- Fixed: Caching file saved in application directory, not permissable in Vista/Windows 7. Now written to application data directory.
+- Change: Minor text corrections in error messages.
+v1.5.2
+- Fixed: Market tree browser would show branches where no marketlogs were found.
+- Fixed: Market tree browser would load even when no logs where found.
+- Feature: Possible to set up a list of solar systems to exclude from marketlogs, under the file menu.
+v1.5.1
+- Added: Caching of outpost xml data. For when the API is down.
+v1.5.0
+- Update: Apocrypha 1.5 data incorporated.
+v1.4.0
+- Added: Option to fetch conquerable station names on program startup (default: Checked).
+- Added: Option to show all market items in browser (default: Not checked).
+- Added: Station owner name added to right click context menu on column headers in log view (Default: Not Shown).
+- Update: Apocrypha 1.3 data incorporated.
+- Fixed: Minor bugs and some errorhandling.
+- Change: Smaller font in market tree browser
+- Fixed: Default Minimum security was hiding 0.0 sec orders (Thanks to ADBOKAT).
+v1.3.2
+- Feature: Added tooltip on bargain finder.
+- Change: More code optimizations.
+v1.3.1
+- Feature: Added retention of bargain finder function between item selections.
+- Change: Some code optimizations.
+v1.3.0
+- Feature: New optional market browser in addition to the plain "Item"-dropdown.
+v1.2.0
+- Feature: Bargain finder is changed to "Find where to..." in an attempt to give more intuitive options.
+- Added: -1.0 is added to give full security filter range.
+- GUI Fix: Selection boxes are easier to read.
+- Fixed: Right-click context menu on table headers were broken
+- Fixed: Min quantity filter was off by 1.
+- Fixed: Bargain finder didn't take security and quantity filter properly into account.
+v1.1.1
+- Fixed: Date filter on marketlogs broken in v1.1.0.
+v1.1.0
+- Added: Uninstall shortcuts
+- Removed: Too many duplicate icons. And actually ended up adding a lot of them again. Damned visual studio deplyoment projects :( (The installer .msi could actually be as low as 800KB ,but duplicate icons are added.)
+- Added: Ability to select highest/lowest buy/sell region.
+v1.0.13
+- Fixed: Minimum sec filtering.
+v1.0.12
+- Fixed: Empyrean Age data.
+v1.0.11
+- Added: Empyrean Age data.
+v1.0.10
+- Added: More error handling.
+- Fixed: Endless messageboxes when error in parsing one or more logs.
+v1.0.9
+- Fixed: Systems below 0.0 security status would not display. They will now show when min. sec. status 0.0 is selected.
+v1.0.8
+- Fixed: Not upgradable due to version problems.
+v1.0.7
+- Feature: System security level can now be filtered.
+- Fixed: Settings were loaded at an incorret time. Resulting in some settings not being remembered.
+v1.0.6
+- Feature: Contextmenu selections are remebered, between item selections.
+- Feature: System security level is now an additional column.
+v1.0.5
+- Feature: Minimum Quantity field. To filter on order volume.
+- Fixed: Tabbing order is corrected.
+v1.0.4
+- Fixed: Volume is now formatted to be more readable.
+- Code restructured and some small fixes.
+- Feature: In region drop downs, you can now click "Select a region..." to clear the windows for that region.
+v1.0.3
+- Feature: Selected Regions are now remembered, between item selections.
+v1.0.2
+- Fixed: Regions with hyphens in their name, would screw up the item. Now all regions are checked against the database list of regions. So don't you be messing with the marketlog filenames!
+v1.0.1
+- Fixed: Exports from "My orders", results in a "Length cannot be less than zero" error.
+- Feature: Added rightclick context menu to table headers. Now you can show/hide any column from a marketlog.

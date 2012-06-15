@@ -1,0 +1,66 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MarketScanner.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MyMarketLogPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MyWindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="MyWindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">990, 740</Value>
+    </Setting>
+    <Setting Name="MyWindowLoc" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">50, 50</Value>
+    </Setting>
+    <Setting Name="MySettingsUpgradeToNewVersion" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MyLoadLogsOnStartup" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MyLogsDateFilterEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MyLogsDateFilter" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2005-02-24</Value>
+    </Setting>
+    <Setting Name="MinMarketQuantity" Type="System.Int64" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MinSystemSecurity" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="SavedEveAccount" Type="MarketScanner.EveApi.EveAccount" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IsMarketBrowserClosed" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ReadConquerableStationsFromApi" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowAllAvailableMarketItemsInTreeView" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ExeptedSystems" Type="System.Collections.ArrayList" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IgnoreExpiredOrders" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SellersL" Type="System.Windows.Forms.ContextMenuStrip" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SellersR" Type="System.Windows.Forms.ContextMenuStrip" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="BuyersL" Type="System.Windows.Forms.ContextMenuStrip" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="BuyersR" Type="System.Windows.Forms.ContextMenuStrip" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
